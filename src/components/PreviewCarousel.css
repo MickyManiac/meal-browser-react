@@ -1,0 +1,20 @@
+
+button.arrow {
+    align-self: center;
+    border: 2px solid grey;
+    border-radius: 50%;
+    background-color: white;
+    font-family: cursive;
+    font-size: 32px;
+    color: grey;
+}
+
+button.arrow:hover {
+    cursor: pointer;
+    border: 2px solid black;
+    color: black;
+}
+
+div.arrowsign {
+    margin: 0px 12px 3px 12px;
+}

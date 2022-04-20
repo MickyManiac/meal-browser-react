@@ -3,10 +3,28 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 body {
     width: 90%;
     margin: auto;
     font-family: cursive;
+}
+
+/*******************************************************************************************/
+
+div.status-message {
+    border: 1px solid red;
+    padding: 5px;
+    font-family: "Courier New";
+    font-size: 16px;
+    color: red;
+}
+
+div.preview-box-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
 }
 
 /*******************************************************************************************/

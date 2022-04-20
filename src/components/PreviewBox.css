@@ -3,6 +3,7 @@ div.preview-box {
     border: 1px solid grey;
     padding: 5px;
     width: 27%;
+    overflow: hidden;
     font-family: Verdana, Sans-serif;
 }
 
