@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    width: 90%;
+    margin: auto;
+    font-family: cursive;
+}
+
+/*******************************************************************************************/
+
+h1.page-title {
+    text-align: center;
+}
+
+p.meal-browser-text {
+    text-align: center;
+}
+
+img.centered-smiley {
+    display: block;
+    margin: auto;
+    width: 20%;
+    height: 20%;
+}
