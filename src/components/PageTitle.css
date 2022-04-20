@@ -1,0 +1,8 @@
+header.page-title {
+    margin: 30px auto;
+}
+
+header.page-title h1 {
+    font-size: 20px;
+    text-align: center;
+}

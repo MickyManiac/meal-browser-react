@@ -1,11 +1,10 @@
 import React from 'react';
+import PageTitle from "../components/PageTitle";
 
 function SimpleSearchPage() {
     return(
         <>
-            <header>
-                <h1 className="page-title">Eenvoudig zoeken naar recepten</h1>
-            </header>
+            <PageTitle text="Eenvoudig zoeken naar recepten" />
         </>
     );
 }

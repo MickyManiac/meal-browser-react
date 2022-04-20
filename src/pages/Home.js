@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PageTitle from "../components/PageTitle";
 import imagenoclue from '../assets/NoClue.GIF';
 import imagenowiknow from '../assets/NowIKnow.GIF';
 
 function HomePage() {
     return(
         <>
-            <header>
-                <h1 className="page-title">Vind altijd een passend recept met Meal Browser</h1>
-            </header>
+            <PageTitle text="Vind altijd een passend recept met Meal Browser" />
             <main>
                 <p className="meal-browser-text">
                     Het kan soms best moeilijk zijn om te koken en eten zoals je dat zou willen doen.

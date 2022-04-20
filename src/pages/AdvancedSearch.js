@@ -1,11 +1,10 @@
 import React from 'react';
+import PageTitle from "../components/PageTitle";
 
 function AdvancedSearchPage() {
     return(
         <>
-            <header>
-                <h1 className="page-title">Uitgebreid zoeken naar recepten</h1>
-            </header>
+            <PageTitle text="Uitgebreid zoeken naar recepten" />
         </>
     );
 }
