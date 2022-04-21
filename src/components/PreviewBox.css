@@ -1,10 +1,13 @@
 div.preview-box {
-    margin: auto 5px auto 5px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between;   <-- removed, as height of preview box should be stable */
+    align-items: flex-start;
     border: 1px solid grey;
+    background-color: white;
     padding: 5px;
-    width: 27%;
+    width: calc((100% - 130px)/3);
     overflow: hidden;
-    font-family: Verdana, Sans-serif;
 }
 
 div.preview-box * {
@@ -23,11 +26,12 @@ div.no-recipe-id {
 }
 
 div.recipe-name {
+    /* choose fixed height and clip exceptionally long recipe names in the preview box */
     height: 40px;
+    overflow: hidden;
 }
 
 div.no-recipe-name {
-    height: 40px;
     color: #666666;
 }
 
@@ -54,6 +58,7 @@ div.no-popularity {
 }
 
 div.image-box {
+    align-self: center;
     display: flex;
     max-height: 200px;
     overflow: hidden;

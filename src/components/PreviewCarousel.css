@@ -1,6 +1,20 @@
 
+div.carousel-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 10px;
+}
+
 button.arrow {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     align-self: center;
+    width: 40px;
+    height: 40px;
     border: 2px solid grey;
     border-radius: 50%;
     background-color: white;
@@ -16,5 +30,5 @@ button.arrow:hover {
 }
 
 div.arrowsign {
-    margin: 0px 12px 3px 12px;
+    margin-bottom: 5px;
 }

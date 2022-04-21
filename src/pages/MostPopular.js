@@ -18,7 +18,7 @@ function MostPopularPage() {
         setSelectedPreviewIndex(previewBoxInd);
         // Fetch detailed recipe data for bulkData[previewBoxInd].id via useState with dependency aray [selectedPreviewIndex]
     }
-    // temp let, make const later
+    // Bulk REST call for 8 specific recipes
     // const bulkQuery = `https://api.spoonacular.com/recipes/informationBulk?ids=715562,715419,715521,715495,715560,776505,715538,716429&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
     // remove later
     const bulkQuery = `https://api.spoonacular.com/recipes/informationBulk?ids=715562,715419,715521,715495&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
@@ -27,7 +27,7 @@ function MostPopularPage() {
     const testBulkData = [
         {id: "411022", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
         {id: "411023", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
-        {id: "411024", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
+        {id: "411024", title: "Eenvoudig recept met een langere beschrijving dan je zou verwachten in de naam van een recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
         {id: "411025", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
         {id: "411026", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303}
     ];
@@ -62,7 +62,7 @@ function MostPopularPage() {
         readyInMinutes: 30,
         servings: 4,
         extendedIngredients: [ {original: "1 liter melk"}, {original: "3 eieren"}, {original: "500 gram speltbloem"}, {original: "snufje zout"} ],
-        instructions: "Doe het meel in een kom. Kluts de eieren. Voeg melk, eieren en zout to aan het meel. Meng het geheel tot een klontvrij beslag.",
+        instructions: "Doe het meel in een kom. Kluts de eieren. Voeg melk, eieren en zout toe. Meng het geheel tot een klontvrij beslag.",
         aggregateLikes: 12303,
         sourceUrl: "https://www.bestaat.niet.yx"
     };
@@ -74,9 +74,6 @@ function MostPopularPage() {
             // console.log(testBulkData[selectedPreviewIndex].id);
             if (bulkData.length > 0) {
                 const recipeId = bulkData[selectedPreviewIndex].id;
-                console.log(bulkData);
-                console.log(selectedPreviewIndex);
-                console.log(bulkData[selectedPreviewIndex].id);
                 const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
                 try {
                     const result = await axios.get(recipeQuery);

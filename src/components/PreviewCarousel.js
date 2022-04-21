@@ -45,12 +45,13 @@ function PreviewCarousel({ carouselItems, fnUseSelectedItemIndex }) {
         <>
             { offset }
             { items.length > 0 &&
-                <div className="preview-box-container">
+                <div className="carousel-box">
                     { items.length > maxNrPositions &&
                         <button className="arrow" type="button" onClick={rotateLeft}><div className="arrowsign">&lt;</div></button>
                     }
                     { items.slice(0, maxNrPositions).map((data, index) => (
                         <PreviewBox
+                            key={data.id+"_"+data.title}
                             previewData={data}
                             itemIndex={(index + offset) % items.length}
                             fnUseItemIndex={setSelectedItemIndex}
