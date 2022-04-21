@@ -5,6 +5,7 @@ import PreviewBox from "./PreviewBox";
 function PreviewCarousel({ carouselItems }) {
     const [ offset, setOffset ] = useState(0);
     const maxNrPositions = 3;
+    const [ selectedItem, setSelectedItem ] = useState(-1);
     function rotateLeft() {
         if (offset <= 0) { setOffset (offset - 1 + carouselItems.length); }
         else { setOffset(offset - 1); }
@@ -31,14 +32,15 @@ function PreviewCarousel({ carouselItems }) {
                     { carouselItems.length > maxNrPositions &&
                         <button className="arrow" type="button" onClick={rotateLeft}><div className="arrowsign">&lt;</div></button>
                     }
-                    { carouselItems.slice(0, maxNrPositions).map((data) => (
-                        <PreviewBox previewData={data}/>
+                    { carouselItems.slice(0, maxNrPositions).map((data, index) => (
+                        <PreviewBox previewData={data} itemIndex={index + offset - carouselItems.length} />
                     ))}
                     { carouselItems.length > maxNrPositions &&
                         <button className="arrow" type="button" onClick={rotateRight}><div className="arrowsign">&gt;</div></button>
                     }
                 </div>
             }
+            { selectedItem }
         </>
     );
 }

@@ -27,6 +27,18 @@ div.preview-box-container {
     gap: 10px;
 }
 
+div.recipe-details {
+    margin: auto 5px auto 5px;
+    border: 1px solid grey;
+    padding: 5px;
+    overflow: hidden;
+    font-family: Verdana, Sans-serif;
+}
+
+div.recipe-details * {
+    font-family: Verdana, Sans-serif;
+}
+
 /*******************************************************************************************/
 
 p.meal-browser-text {
