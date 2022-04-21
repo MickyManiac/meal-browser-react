@@ -1,48 +1,69 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState, memo} from 'react';
 import './PreviewCarousel.css';
 import PreviewBox from "./PreviewBox";
 
-function PreviewCarousel({ carouselItems }) {
-    const [ offset, setOffset ] = useState(0);
+function PreviewCarousel({ carouselItems, fnUseSelectedItemIndex }) {
     const maxNrPositions = 3;
-    const [ selectedItem, setSelectedItem ] = useState(-1);
+    // copy property carouselItems into state variable items
+    // change items on carousel rotation while keeping carouselItems unchanged
+    // use memo to avoid that carousel re-renders due to state changes in parent page/component
+    const [items, setItems] = useState([]);
+    const [offset, setOffset] = useState(0);
+    const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
     function rotateLeft() {
-        if (offset <= 0) { setOffset (offset - 1 + carouselItems.length); }
+        if (offset <= 0) { setOffset (offset - 1 + items.length); }
         else { setOffset(offset - 1); }
-        const item = carouselItems[carouselItems.length - 1];
-        for (let i=(carouselItems.length - 1); i > 0; i--) {
-            carouselItems[i] = carouselItems[i-1];
+        const item = items[items.length - 1];
+        for (let i=(items.length - 1); i > 0; i--) {
+            items[i] = items[i-1];
         }
-        carouselItems[0] = item;
+        items[0] = item;
     }
     function rotateRight() {
-        if (offset >= carouselItems.length-1) { setOffset (offset + 1 - carouselItems.length); }
+        if (offset >= items.length-1) { setOffset (offset + 1 - items.length); }
         else { setOffset(offset + 1); }
-        const item = carouselItems[0];
-        for (let i=0; i < carouselItems.length - 1; i++) {
-            carouselItems[i] = carouselItems[i+1];
+        const item = items[0];
+        for (let i=0; i < items.length - 1; i++) {
+            items[i] = items[i+1];
         }
-        carouselItems[carouselItems.length-1] = item;
+        items[items.length-1] = item;
     }
+    useEffect(() => {
+        // clone the carouselItems property, so it will remain unchanged
+        setItems(Array.from(carouselItems));
+    }, []);
+    useEffect(() => {
+        if (selectedItemIndex > -1) {
+            fnUseSelectedItemIndex(selectedItemIndex);
+        }
+    }, [selectedItemIndex]);
+    // temporary
+    useEffect(() => {
+        console.log(items);
+    }, [offset]);
     return(
         <>
             { offset }
-            { carouselItems.length > 0 &&
+            { items.length > 0 &&
                 <div className="preview-box-container">
-                    { carouselItems.length > maxNrPositions &&
+                    { items.length > maxNrPositions &&
                         <button className="arrow" type="button" onClick={rotateLeft}><div className="arrowsign">&lt;</div></button>
                     }
-                    { carouselItems.slice(0, maxNrPositions).map((data, index) => (
-                        <PreviewBox previewData={data} itemIndex={index + offset - carouselItems.length} />
+                    { items.slice(0, maxNrPositions).map((data, index) => (
+                        <PreviewBox
+                            previewData={data}
+                            itemIndex={(index + offset) % items.length}
+                            fnUseItemIndex={setSelectedItemIndex}
+                        />
                     ))}
-                    { carouselItems.length > maxNrPositions &&
+                    { items.length > maxNrPositions &&
                         <button className="arrow" type="button" onClick={rotateRight}><div className="arrowsign">&gt;</div></button>
                     }
                 </div>
             }
-            { selectedItem }
+            { selectedItemIndex }
         </>
     );
 }
 
-export default PreviewCarousel;
+export default memo(PreviewCarousel);
