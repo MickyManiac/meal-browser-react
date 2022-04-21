@@ -25,6 +25,7 @@ div.middle-part {
     justify-content: center;
     flex-wrap: wrap-reverse;
     column-gap: 30px;
+    row-gap: 10px;
     margin: 10px 0px 15px 0px;
 }
 
@@ -46,7 +47,7 @@ div.instructions {
     max-width: max-content;
     border: 1px solid darkgoldenrod;
     background-color: goldenrod;
-    padding: 0px 5px;
+    padding: 0px 10px;
 }
 
 div.recipe-footer {
@@ -74,8 +75,21 @@ div.recipe-section {
 }
 
 div.empty-recipe-section {
-    margin: 5px 0px 0px 0px;
-    font-weight: bold;
+    margin: 0px 0px 10px 0px;
+    font-size: 80%;
+    color: #666666;
+}
+
+div.recipe-source {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 80%;
+}
+
+div.empty-recipe-source {
+    margin: 5px 0px 10px 0px;
+    font-size: 80%;
     color: #666666;
 }
 

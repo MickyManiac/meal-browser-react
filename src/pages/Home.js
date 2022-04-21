@@ -22,7 +22,7 @@ function HomePage() {
                 </p>
                 <img className="centered-smiley" alt="No clue what to cook?" src={imagenoclue} />
                     <p className="meal-browser-text">
-                        Met Meal Browser vind jij voortuin altijd een passend recept.
+                        Met Meal Browser vind jij voortaan altijd een passend recept.
                     </p>
                     <p className="meal-browser-text">
                         Met <Link to="/simplesearch">eenvoudig zoeken</Link> helpt Meal Browser je om recepten te vinden

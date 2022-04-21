@@ -16,7 +16,6 @@ function MostPopularPage() {
     const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(-1);
     function handlePreviewBoxSelection(previewBoxInd) {
         setSelectedPreviewIndex(previewBoxInd);
-        // Fetch detailed recipe data for bulkData[previewBoxInd].id via useState with dependency aray [selectedPreviewIndex]
     }
     // Bulk REST call for 8 specific recipes
     // const bulkQuery = `https://api.spoonacular.com/recipes/informationBulk?ids=715562,715419,715521,715495,715560,776505,715538,716429&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
@@ -57,14 +56,14 @@ function MostPopularPage() {
     // temp testRecipeDetails, remove later
     const testRecipeDetails = {
         id: "411022",
-        title: "Eenvoudig recept",
-        image: noimagefound,
-        readyInMinutes: 30,
-        servings: 4,
-        extendedIngredients: [ {original: "1 liter melk"}, {original: "3 eieren"}, {original: "500 gram speltbloem"}, {original: "snufje zout"} ],
-        instructions: "Doe het meel in een kom. Kluts de eieren. Voeg melk, eieren en zout toe. Meng het geheel tot een klontvrij beslag.",
-        aggregateLikes: 12303,
-        sourceUrl: "https://www.bestaat.niet.yx"
+//        title: "Eenvoudig recept",
+//        aggregateLikes: 12303,
+//        image: noimagefound,
+//        readyInMinutes: 30,
+//        extendedIngredients: [ {original: "1 liter melk"}, {original: "3 eieren"}, {original: "500 gram speltbloem"}, {original: "snufje zout"} ],
+//        servings: 4,
+//        instructions: "Doe het meel in een kom. Kluts de eieren. Voeg melk, eieren en zout toe. Meng het geheel tot een klontvrij beslag.",
+//        sourceUrl: "https://www.bestaat.niet.yx"
     };
     // Fetch recipe details for a specific recipe whenever a new recipe has been selected (by clicking a preview box)
     useEffect(() => {
