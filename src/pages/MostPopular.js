@@ -9,7 +9,7 @@ import noimagefound from "../assets/NoImageFound.GIF";
 function MostPopularPage() {
     const [bulkData, setBulkData] = useState([]);
     const [errorBulkData, setErrorBulkData] = useState(false);
-    const [loadingBulkData, setLoadingBulkData] = useState(true);
+    const [loadingBulkData, setLoadingBulkData] = useState(false);
     const [recipeDetails, setRecipeDetails] = useState({});
     const [errorRecipeDetails, setErrorRecipeDetails] = useState(false);
     const [loadingRecipeDetails, setLoadingRecipeDetails] = useState(true);
@@ -62,15 +62,16 @@ function MostPopularPage() {
 //        readyInMinutes: 30,
 //        extendedIngredients: [ {original: "1 liter melk"}, {original: "3 eieren"}, {original: "500 gram speltbloem"}, {original: "snufje zout"} ],
 //        servings: 4,
-//        instructions: "Doe het meel in een kom. Kluts de eieren. Voeg melk, eieren en zout toe. Meng het geheel tot een klontvrij beslag.",
-//        sourceUrl: "https://www.bestaat.niet.yx"
+        instructions: " <ol>   <li>  Doe het meel in een kom.</li> <li>Kluts de eieren.</li>   <li>   Voeg melk, <b>eieren </b>en zout toe. </li><li>Meng het geheel tot een klontvrij beslag. </li> </ol>",
+//        instructions: "<ol><li>Doe het meel in een kom.</li><li>Kluts de eieren.</li><li>Voeg melk, eieren en zout toe.</li><li>Meng het geheel tot een klontvrij beslag.</li></ol>",
+//        instructions: `• Doe het meel in een kom.• Kluts de eieren.• Voeg melk, eieren en zout toe.• Meng het geheel tot een klontvrij beslag.`,
+//        sourceUrl: "https://www.bestaat.niet.yx",
     };
     // Fetch recipe details for a specific recipe whenever a new recipe has been selected (by clicking a preview box)
     useEffect(() => {
         async function fetchRecipeDetails() {
             setErrorRecipeDetails(false);
             setLoadingRecipeDetails(true);
-            // console.log(testBulkData[selectedPreviewIndex].id);
             if (bulkData.length > 0) {
                 const recipeId = bulkData[selectedPreviewIndex].id;
                 const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
@@ -100,9 +101,7 @@ function MostPopularPage() {
                     <div className="status-message">Data ophalen...</div>
                 }
                 { bulkData.length > 0 && !errorBulkData && !loadingBulkData &&
-                    <>
-                        <PreviewCarousel carouselItems={bulkData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
-                    </>
+                    <PreviewCarousel carouselItems={bulkData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
                 }
                 { selectedPreviewIndex > -1 &&
                     <>
@@ -113,29 +112,19 @@ function MostPopularPage() {
                         { loadingRecipeDetails &&
                             <div className="status-message">Data ophalen...</div>
                         }
-                        {
-                            Object.keys(recipeDetails).length > 0 &&
-                            <>
-                                <RecipeDetails recipeData={recipeDetails}/>
-                            </>
+                        { Object.keys(recipeDetails).length > 0 &&
+                            <RecipeDetails recipeData={recipeDetails}/>
                         }
                     </>
                 }
                 { testBulkData.length > 0 &&
-                    <>
-                        <div>GEBRUIK VOOR NU TEST DATA</div>
-                        <PreviewCarousel carouselItems={testBulkData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
-                    </>
+                    <PreviewCarousel carouselItems={testBulkData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
                 }
                 { selectedPreviewIndex > -1 &&
                     <>
                         <div>De preview-box met index {selectedPreviewIndex} werd geselecteerd!</div>
-                        {
-                            Object.keys(testRecipeDetails).length > 0 &&
-                            <>
-                                <div>GEBRUIK VOOR NU TEST DATA</div>
-                                <RecipeDetails recipeData={testRecipeDetails}/>
-                            </>
+                        { Object.keys(testRecipeDetails).length > 0 &&
+                            <RecipeDetails recipeData={testRecipeDetails}/>
                         }
                     </>
                 }

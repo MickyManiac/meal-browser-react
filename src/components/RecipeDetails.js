@@ -1,6 +1,7 @@
 import React from 'react';
 import './RecipeDetails.css';
 import noimagefound from "../assets/NoImageFound.GIF";
+import untagInstructionsString from "../helpers/untagInstructionsString";
 
 function RecipeDetails({ recipeData }) {
     return(
@@ -36,7 +37,7 @@ function RecipeDetails({ recipeData }) {
                             }
                             <ul className="bullet-list">
                                 { recipeData.extendedIngredients.map((ingredient, index) => (
-                                    <li key={recipeData.id+"_"+index}>{ingredient.original}</li>
+                                    <li key={recipeData.id+"_ingr_"+index}>{ingredient.original}</li>
                                 ))}
                             </ul>
                         </>
@@ -61,7 +62,12 @@ function RecipeDetails({ recipeData }) {
                         ?
                         <>
                             <div className="recipe-section">Bereidingswijze</div>
-                            <div className="recipe-data">{recipeData.instructions}</div>
+                            <div className="recipe-data">
+                                { untagInstructionsString(recipeData.instructions).split(/\|/).map((step, index) => (
+                                    <div key={recipeData.id+"_instr_"+index}>{step}</div>
+                                ))
+                                }
+                            </div>
                         </>
                         :
                         <div className="empty-recipe-section">

@@ -1,10 +1,10 @@
 import React from 'react';
 
-function ButtonForResetOrSubmit({buttonType, buttonClassName, buttonDisabled, buttonText, fnOnClick}) {
+function ButtonForResetOrSubmit({buttonType, buttonDisabled, buttonText, fnOnClick}) {
     return(
         <button
             type={buttonType}
-            className={buttonClassName}
+            className="submit-reset"
             disabled={buttonDisabled}
             onClick={(e) => fnOnClick(e)}
         >

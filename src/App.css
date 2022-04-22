@@ -32,3 +32,75 @@ img.centered-smiley {
     width: 20%;
     height: 20%;
 }
+
+/*******************************************************************************************/
+
+fieldset {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid darkgoldenrod;
+    padding: 5px 5px;
+}
+
+fieldset * {
+    font-family: Verdana, Sans-serif;
+}
+
+label {
+    font-size: 14px;
+}
+
+div.form-elements-row {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0px;
+}
+
+div.form-element {
+    display: flex;
+    justify-content: center;
+    margin: 0px 15px;
+}
+
+input {
+    margin-left: 6px;
+    height: 30px;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    padding: 0px 5px;
+}
+
+input:focus {
+    outline: 1px solid #111111;
+}
+
+input.free-text {
+    width: 200px;
+}
+
+input.number
+{
+    width: 60px;
+}
+
+select {
+    margin-left: 6px;
+    height: 30px;
+    padding: 0px 5px;
+    border: 1px solid #333333;
+    border-radius: 5px;
+}
+
+button.submit-reset {
+    margin-top: 10px;
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid #333333;
+    padding: 5px 5px;
+}
+
+button.submit-reset:disabled {
+    border: 1px solid #dddddd;
+}

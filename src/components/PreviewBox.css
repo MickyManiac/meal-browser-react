@@ -2,9 +2,8 @@ div.preview-box {
     display: flex;
     flex-direction: column;
     /* justify-content: space-between;   <-- removed, as height of preview box should be stable */
-    align-items: flex-start;
-    border: 1px solid grey;
-    background-color: white;
+    border: 1px solid RGB(143, 118, 50);
+    background-color: RGB(222, 199, 138);
     padding: 5px;
     width: calc((100% - 130px)/3);
     overflow: hidden;
@@ -69,4 +68,5 @@ img.icon {
     margin: 5px;
     width: 100%;
     height: 100%;
+    border: 1px solid darkgoldenrod;
 }

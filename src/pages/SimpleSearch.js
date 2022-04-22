@@ -5,12 +5,14 @@ import InputField from "../components/InputField";
 import ButtonForResetOrSubmit from "../components/ButtonForResetOrSubmit";
 import PreviewCarousel from "../components/PreviewCarousel";
 import RecipeDetails from "../components/RecipeDetails";
+import validSearchTerm from "../helpers/validSearchTerm";
 
 function SimpleSearchPage() {
     const [textQueryValue, setTextQueryValue] = React.useState('');
+    const [formFeedback, setFormFeedback] = useState('');
     const [recipeData, setRecipeData] = useState({});
     const [errorRecipeData, setErrorRecipeData] = useState(false);
-    const [loadingRecipeData, setLoadingRecipeData] = useState(true);
+    const [loadingRecipeData, setLoadingRecipeData] = useState(false);
     const [recipeDetails, setRecipeDetails] = useState({});
     const [errorRecipeDetails, setErrorRecipeDetails] = useState(false);
     const [loadingRecipeDetails, setLoadingRecipeDetails] = useState(true);
@@ -18,17 +20,30 @@ function SimpleSearchPage() {
     function handlePreviewBoxSelection(previewBoxInd) {
         setSelectedPreviewIndex(previewBoxInd);
     }
+    // Handle form submit
     function submitData(e) {
+        let feedback = ``;
+        let validFormData = true;
         e.preventDefault();
-        // alert(`We gaan recepten zoeken met zoekterm ${textQueryValue}`);
-        fetchRecipeData(textQueryValue);
+        if (!textQueryValue) {
+            feedback = `Vul een zoekterm in.`;
+            validFormData = false;
+        } else if (!validSearchTerm(textQueryValue)) {
+            feedback = `"${textQueryValue}"  is geen geldige zoekterm. Toegestaan zijn: alle letters, alle cijfers, de tekens " & ( ) + - en spaties.`;
+            validFormData = false;
+        }
+        setFormFeedback(feedback);
+        if (validFormData) {
+            fetchRecipeData(textQueryValue);
+        }
     }
     // Fetch data for recipes based on user's search text and Spoonacular's complex search endpoint.
     async function fetchRecipeData(searchText) {
         setErrorRecipeData(false);
         setLoadingRecipeData(true);
+        setSelectedPreviewIndex(-1);
         if (searchText) {
-            const restCall = `https://api.spoonacular.com/recipes/complexSearch?&query=${searchText}&number=4&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            const restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchText}&number=1&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
             try {
                 console.log({searchText});
                 const response = await axios.get(restCall);
@@ -47,7 +62,6 @@ function SimpleSearchPage() {
         async function fetchRecipeDetails() {
             setErrorRecipeDetails(false);
             setLoadingRecipeDetails(true);
-            // console.log(testBulkData[selectedPreviewIndex].id);
             if (recipeData.length > 0) {
                 const recipeId = recipeData[selectedPreviewIndex].id;
                 const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
@@ -71,23 +85,31 @@ function SimpleSearchPage() {
             <PageTitle text="Eenvoudig zoeken naar recepten" />
             <form>
                 <fieldset>
-                    <InputField
-                        fieldId="text-query-field"
-                        labelText="Vul een zoekterm in:"
-                        fieldType="text"
-                        fieldName="text-query"
-                        fieldValue={textQueryValue}
-                        fieldPlacholder="bijv fruit salad"
-                        fnOnChange={setTextQueryValue}
-                    />
-                    <ButtonForResetOrSubmit
-                        buttonType="submit"
-                        buttonDisabled={!textQueryValue}
-                        buttonText="Zoeken"
-                        fnOnClick={submitData}
-                    />
+                    <div className="form-elements-row">
+                        <InputField
+                            fieldClassName="free-text"
+                            fieldId="text-query-field"
+                            labelText="Vul een zoekterm in:"
+                            fieldType="text"
+                            fieldName="text-query"
+                            fieldValue={textQueryValue}
+                            fieldPlacholder="bijv fruit salad"
+                            fnOnChange={setTextQueryValue}
+                        />
+                    </div>
+                    <div className="form-elements-row">
+                        <ButtonForResetOrSubmit
+                            buttonType="submit"
+                            buttonDisabled={!textQueryValue}
+                            buttonText="Zoeken"
+                            fnOnClick={submitData}
+                        />
+                    </div>
                 </fieldset>
             </form>
+            { formFeedback &&
+                <div className="status-message">{formFeedback}</div>
+            }
             { errorRecipeData &&
                 <div className="status-message">Er is iets misgegaan met het ophalen van de data.</div>
             }
@@ -99,7 +121,6 @@ function SimpleSearchPage() {
             }
             { selectedPreviewIndex > -1 &&
                 <>
-                    <div>De preview-box met index {selectedPreviewIndex} werd geselecteerd!</div>
                     { errorRecipeDetails &&
                         <div className="status-message">Er is iets misgegaan met het ophalen van de data.</div>
                     }

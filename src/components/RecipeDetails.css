@@ -4,9 +4,9 @@ article.recipe-details {
     flex-direction: column;
     align-items: center;
     margin: 5px 0px 15px 0px;
-    padding: 5px 5px 15px 5px;
-    background-color: RGB(222, 199, 138);
+    padding: 5px 0px 15px 0px;
     border: 1px solid RGB(143, 118, 50);
+    background-color: RGB(222, 199, 138);
 }
 
 article.recipe-details * {
@@ -17,6 +17,7 @@ div.recipe-header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0px 15px;
 }
 
 div.middle-part {
@@ -26,7 +27,7 @@ div.middle-part {
     flex-wrap: wrap-reverse;
     column-gap: 30px;
     row-gap: 10px;
-    margin: 10px 0px 15px 0px;
+    margin: 10px 15px 15px 15px;
 }
 
 div.middle-text {
@@ -54,6 +55,7 @@ div.recipe-footer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0px 15px;
 }
 
 div.recipe-title {
