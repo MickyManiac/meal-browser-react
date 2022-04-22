@@ -1,22 +1,22 @@
 import React from 'react';
 import './RecipeDetails.css';
 import noimagefound from "../assets/NoImageFound.GIF";
-import untagInstructionsString from "../helpers/untagInstructionsString";
+import cleanUpInstructionsString from "../helpers/cleanUpInstructionsString";
 
 function RecipeDetails({ recipeData }) {
     return(
         <article className="recipe-details">
             <div className="recipe-header">
-                { recipeData.title
+                { recipeData.title && recipeData.title.length > 0
                     ?
                     <div className="recipe-title">{recipeData.title}</div>
                     :
                     <div className="no-recipe-title">-----</div>
                 }
-                { recipeData.aggregateLikes &&
+                { recipeData.aggregateLikes >= 0 &&
                     <div className="recipe-data">{recipeData.aggregateLikes} likes</div>
                 }
-                { recipeData.readyInMinutes
+                { recipeData.readyInMinutes >= 0
                     ?
                     <>
                         <div className="recipe-section">Bereidingstijd</div>
@@ -31,8 +31,10 @@ function RecipeDetails({ recipeData }) {
                     { recipeData.extendedIngredients && recipeData.extendedIngredients.length > 0
                         ?
                         <>
-                            {recipeData.servings ?
-                                <div className="recipe-section">Ingredi&euml;nten voor {recipeData.servings} porties</div> :
+                            { recipeData.servings >= 0
+                                ?
+                                <div className="recipe-section">Ingredi&euml;nten voor {recipeData.servings} porties</div>
+                                :
                                 <div className="recipe-section">Ingredi&euml;nten</div>
                             }
                             <ul className="bullet-list">
@@ -48,9 +50,16 @@ function RecipeDetails({ recipeData }) {
                     }
                 </div>
                 <div className="middle-image">
-                    { recipeData.image
+                    { recipeData.image && recipeData.image.length > 0
                         ?
-                        <img className="recipe-image" alt={recipeData.title} src={recipeData.image}/>
+                        <>
+                            { recipeData.title && recipeData.title.length > 0
+                                ?
+                                <img className="recipe-image" alt={recipeData.title} src={recipeData.image}/>
+                                :
+                                <img className="recipe-image" alt="-----" src={recipeData.image}/>
+                            }
+                        </>
                         :
                         <img className="recipe-image" alt="No food image found." src={noimagefound}/>
                     }
@@ -58,12 +67,12 @@ function RecipeDetails({ recipeData }) {
             </div>
             <div className="recipe-footer">
                 <div className="instructions">
-                    { recipeData.instructions
+                    { recipeData.instructions && recipeData.instructions.length > 0
                         ?
                         <>
                             <div className="recipe-section">Bereidingswijze</div>
                             <div className="recipe-data">
-                                { untagInstructionsString(recipeData.instructions).split(/\|/).map((step, index) => (
+                                { cleanUpInstructionsString(recipeData.instructions).split(/\|/).map((step, index) => (
                                     <div key={recipeData.id+"_instr_"+index}>{step}</div>
                                 ))
                                 }
@@ -75,7 +84,7 @@ function RecipeDetails({ recipeData }) {
                         </div>
                         }
                 </div>
-                { recipeData.sourceUrl
+                { recipeData.sourceUrl && recipeData.sourceUrl.length > 0
                     ?
                     <div className="recipe-source">
                         <div className="recipe-section">bron</div>

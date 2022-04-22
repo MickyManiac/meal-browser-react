@@ -8,36 +8,41 @@ import RecipeDetails from "../components/RecipeDetails";
 import validSearchTerm from "../helpers/validSearchTerm";
 
 function SimpleSearchPage() {
-    const [textQueryValue, setTextQueryValue] = React.useState('');
+    const [searchTermValue, setSearchTermValue] = React.useState('');
     const [formFeedback, setFormFeedback] = useState('');
-    const [recipeData, setRecipeData] = useState({});
+    const [submittedFormData, setSubmittedFormData] = useState('');
+    const [recipeData, setRecipeData] = useState(null);
     const [errorRecipeData, setErrorRecipeData] = useState(false);
     const [loadingRecipeData, setLoadingRecipeData] = useState(false);
+    const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(-1);
     const [recipeDetails, setRecipeDetails] = useState({});
     const [errorRecipeDetails, setErrorRecipeDetails] = useState(false);
     const [loadingRecipeDetails, setLoadingRecipeDetails] = useState(true);
-    const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(-1);
     function handlePreviewBoxSelection(previewBoxInd) {
         setSelectedPreviewIndex(previewBoxInd);
     }
-    // Handle form submit
-    function submitData(e) {
+    // Handle submit of form data:
+    // - validate form data
+    // - provide user feedback for invalid form data
+    // - search for results for valid form data
+    function submitFormData(e) {
         let feedback = ``;
         let validFormData = true;
         e.preventDefault();
-        if (!textQueryValue) {
+        if (!searchTermValue) {
             feedback = `Vul een zoekterm in.`;
             validFormData = false;
-        } else if (!validSearchTerm(textQueryValue)) {
-            feedback = `"${textQueryValue}"  is geen geldige zoekterm. Toegestaan zijn: alle letters, alle cijfers, de tekens " & ( ) + - en spaties.`;
+        } else if (!validSearchTerm(searchTermValue)) {
+            feedback = `"${searchTermValue}"  is geen geldige zoekterm. Toegestaan zijn: alle letters, alle cijfers, de tekens " & ( ) + - en spaties.`;
             validFormData = false;
         }
         setFormFeedback(feedback);
+        setSubmittedFormData(`zoekterm "${searchTermValue}"`);
         if (validFormData) {
-            fetchRecipeData(textQueryValue);
+            fetchRecipeData(searchTermValue);
         }
     }
-    // Fetch data for recipes based on user's search text and Spoonacular's complex search endpoint.
+    // Search for recipes based on submitted form data and Spoonacular's complex search endpoint.
     async function fetchRecipeData(searchText) {
         setErrorRecipeData(false);
         setLoadingRecipeData(true);
@@ -62,7 +67,7 @@ function SimpleSearchPage() {
         async function fetchRecipeDetails() {
             setErrorRecipeDetails(false);
             setLoadingRecipeDetails(true);
-            if (recipeData.length > 0) {
+            if (recipeData && recipeData.length > 0) {
                 const recipeId = recipeData[selectedPreviewIndex].id;
                 const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
                 try {
@@ -92,42 +97,56 @@ function SimpleSearchPage() {
                             labelText="Vul een zoekterm in:"
                             fieldType="text"
                             fieldName="text-query"
-                            fieldValue={textQueryValue}
+                            fieldValue={searchTermValue}
                             fieldPlacholder="bijv fruit salad"
-                            fnOnChange={setTextQueryValue}
+                            fnOnChange={setSearchTermValue}
                         />
                     </div>
                     <div className="form-elements-row">
                         <ButtonForResetOrSubmit
                             buttonType="submit"
-                            buttonDisabled={!textQueryValue}
+                            buttonDisabled={!searchTermValue}
                             buttonText="Zoeken"
-                            fnOnClick={submitData}
+                            fnOnClick={submitFormData}
                         />
                     </div>
                 </fieldset>
             </form>
             { formFeedback &&
-                <div className="status-message">{formFeedback}</div>
+                <div className="error-message">{formFeedback}</div>
             }
             { errorRecipeData &&
-                <div className="status-message">Er is iets misgegaan met het ophalen van de data.</div>
+                <div className="error-message">Er is iets misgegaan met het zoeken naar recepten. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
             }
             { loadingRecipeData &&
-                <div className="status-message">Data ophalen...</div>
+                <div className="status-message">Zoeken naar recepten...</div>
             }
-            { recipeData.length > 0 && !errorRecipeData && !loadingRecipeData &&
-                <PreviewCarousel carouselItems={recipeData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
+            { !errorRecipeData && !loadingRecipeData &&
+                <>
+                    { recipeData && recipeData.length > 0
+                        ?
+                        <>
+                            <div className="confirmation-message">Resultaten voor {submittedFormData}:</div>
+                            <PreviewCarousel carouselItems={recipeData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
+                        </>
+                        :
+                        <>
+                            { recipeData && recipeData.length === 0 &&
+                                <div className="error-message">Geen resultaten voor {submittedFormData}. Probeer een andere zoekterm.</div>
+                            }
+                        </>
+                    }
+                </>
             }
             { selectedPreviewIndex > -1 &&
                 <>
                     { errorRecipeDetails &&
-                        <div className="status-message">Er is iets misgegaan met het ophalen van de data.</div>
+                        <div className="error-message">Er is iets misgegaan met het ophalen van de receptinformatie. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
                     }
                     { loadingRecipeDetails &&
-                        <div className="status-message">Data ophalen...</div>
+                        <div className="status-message">Receptinformatie ophalen...</div>
                     }
-                    { Object.keys(recipeDetails).length > 0 &&
+                    { Object.keys(recipeDetails).length > 0 && !errorRecipeDetails && !loadingRecipeDetails &&
                         <RecipeDetails recipeData={recipeDetails}/>
                     }
                 </>

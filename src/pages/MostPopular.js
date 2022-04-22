@@ -24,8 +24,8 @@ function MostPopularPage() {
     // const bulkQuery = `https://api.spoonacular.com/recipes/informationBulk?ids=715562&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
     // temp testBulkData, remove later
     const testBulkData = [
-        {id: "411022", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
-        {id: "411023", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
+        {id: "411022", title: "Eenvoudigste recept", readyInMinutes: 10, aggregateLikes: 23013},
+        {image: noimagefound},
         {id: "411024", title: "Eenvoudig recept met een langere beschrijving dan je zou verwachten in de naam van een recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
         {id: "411025", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
         {id: "411026", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303}
@@ -95,10 +95,10 @@ function MostPopularPage() {
             <PageTitle text="Populaire recepten" />
             <>
                 { errorBulkData &&
-                    <div className="status-message">Er is iets misgegaan met het ophalen van de data.</div>
+                    <div className="error-message">Er is iets misgegaan met het ophalen van de data.</div>
                 }
                 { loadingBulkData &&
-                    <div className="status-message">Data ophalen...</div>
+                    <div className="error-message">Data ophalen...</div>
                 }
                 { bulkData.length > 0 && !errorBulkData && !loadingBulkData &&
                     <PreviewCarousel carouselItems={bulkData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
@@ -107,12 +107,12 @@ function MostPopularPage() {
                     <>
                         <div>De preview-box met index {selectedPreviewIndex} werd geselecteerd!</div>
                         { errorRecipeDetails &&
-                            <div className="status-message">Er is iets misgegaan met het ophalen van de data.</div>
+                            <div className="error-message">Er is iets misgegaan met het ophalen van de receptinformatie. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
                         }
                         { loadingRecipeDetails &&
-                            <div className="status-message">Data ophalen...</div>
+                            <div className="error-message">Receptinformatie ophalen...</div>
                         }
-                        { Object.keys(recipeDetails).length > 0 &&
+                        { Object.keys(recipeDetails).length > 0 && !errorRecipeDetails && !loadingRecipeDetails &&
                             <RecipeDetails recipeData={recipeDetails}/>
                         }
                     </>

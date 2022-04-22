@@ -10,7 +10,7 @@ function DietSelector({selectorValue, fnOnChange}) {
                 value={selectorValue}
                 onChange={(e) => {fnOnChange(e.target.value)}}
             >
-                <option value="None">None</option>
+                <option value="No preference">No preference</option>
                 <option value="Gluten free">Gluten free</option>
                 <option value="Ketogenic">Ketogenic</option>
                 <option value="Vegan">Vegan</option>

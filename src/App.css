@@ -12,9 +12,19 @@ body {
 
 /*******************************************************************************************/
 
+div.confirmation-message {
+    padding: 15px 5px 5px 5px;
+}
+
 div.status-message {
-    border: 1px solid red;
-    padding: 5px;
+    padding: 15px 5px 5px 5px;
+    font-family: "Courier New";
+    font-size: 16px;
+    color: black;
+}
+
+div.error-message {
+    padding: 15px 5px 5px 5px;
     font-family: "Courier New";
     font-size: 16px;
     color: red;
@@ -72,7 +82,7 @@ input {
 }
 
 input:focus {
-    outline: 1px solid #111111;
+    outline: 1px solid #333333;
 }
 
 input.free-text {
