@@ -34,6 +34,7 @@ div.error-message {
 
 p.meal-browser-text {
     text-align: center;
+    margin-bottom: 8px;
 }
 
 img.centered-smiley {
@@ -49,7 +50,8 @@ fieldset {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 1px solid darkgoldenrod;
+    border: 1px solid #666666;
+    border-radius: 5px;
     padding: 5px 5px;
 }
 

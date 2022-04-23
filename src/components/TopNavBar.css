@@ -3,7 +3,7 @@ nav.top-nav-bar {
     justify-content: flex-start;
     width: 100%;
     padding: 0px 20px;
-    background-color: #333333;
+    background-color: #666666;
     overflow: hidden;
 }
 
@@ -21,7 +21,7 @@ nav.top-nav-bar a:hover {
     color: black;
 }
 
-.active-link {
-    background-color: #04AA6D;
-    color: white;
+nav.top-nav-bar a.active-link {
+    background-color: #cccccc;
+    color: black;
 }

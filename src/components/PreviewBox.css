@@ -1,6 +1,7 @@
 div.preview-box {
     display: flex;
     flex-direction: column;
+    margin-bottom: 10px;
     border: 1px solid RGB(143, 118, 50);
     background-color: RGB(222, 199, 138);
     padding: 5px;

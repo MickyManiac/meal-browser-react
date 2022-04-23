@@ -1,9 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {LanguageContext} from "../context/LanguageContext";
+import getText from "../helpers/getText";
+import cleanUpInstructionsString from "../helpers/cleanUpInstructionsString";
 import './RecipeDetails.css';
 import noimagefound from "../assets/NoImageFound.GIF";
-import cleanUpInstructionsString from "../helpers/cleanUpInstructionsString";
 
 function RecipeDetails({ recipeData }) {
+    // Language context: language can be "en" (english) or "nl" (dutch).
+    const { activeLanguage } = useContext(LanguageContext);
+
+    // Render component content
     return(
         <article className="recipe-details">
             <div className="recipe-header">
@@ -19,11 +25,11 @@ function RecipeDetails({ recipeData }) {
                 { recipeData.readyInMinutes >= 0
                     ?
                     <>
-                        <div className="recipe-section">Bereidingstijd</div>
-                        <div> {recipeData.readyInMinutes} minuten</div>
+                        <div className="recipe-section">{ getText(activeLanguage, "wordPreparationTime") }</div>
+                        <div> {recipeData.readyInMinutes} { getText(activeLanguage, "wordMinutes") }</div>
                     </>
                     :
-                    <div className="empty-recipe-section">De bereidingstijd kon voor dit recept helaas niet worden opgehaald.</div>
+                    <div className="empty-recipe-section">{ getText(activeLanguage, "msgNoPreparationTime") }</div>
                 }
             </div>
             <div className="middle-part">
@@ -33,9 +39,9 @@ function RecipeDetails({ recipeData }) {
                         <>
                             { recipeData.servings >= 0
                                 ?
-                                <div className="recipe-section">Ingredi&euml;nten voor {recipeData.servings} porties</div>
+                                <div className="recipe-section">{ getText(activeLanguage, "wordIngredients") } { getText(activeLanguage, "wordFor") } {recipeData.servings} { getText(activeLanguage, "wordServings") }</div>
                                 :
-                                <div className="recipe-section">Ingredi&euml;nten</div>
+                                <div className="recipe-section">{ getText(activeLanguage, "wordIngredients") }</div>
                             }
                             <ul className="bullet-list">
                                 { recipeData.extendedIngredients.map((ingredient, index) => (
@@ -45,7 +51,7 @@ function RecipeDetails({ recipeData }) {
                         </>
                         :
                         <div className="empty-recipe-section">
-                            De ingredi&euml;nten konden voor dit recept helaas niet worden opgehaald.
+                            { getText(activeLanguage, "msgNoIngredients") }
                         </div>
                     }
                 </div>
@@ -61,7 +67,7 @@ function RecipeDetails({ recipeData }) {
                             }
                         </>
                         :
-                        <img className="recipe-image" alt="No food image found." src={noimagefound}/>
+                        <img className="recipe-image" alt="Food image not found for this recipe." src={noimagefound}/>
                     }
                 </div>
             </div>
@@ -70,7 +76,7 @@ function RecipeDetails({ recipeData }) {
                     { recipeData.instructions && recipeData.instructions.length > 0
                         ?
                         <>
-                            <div className="recipe-section">Bereidingswijze</div>
+                            <div className="recipe-section">{ getText(activeLanguage, "wordInstructions") }</div>
                             <div className="recipe-data">
                                 { cleanUpInstructionsString(recipeData.instructions).split(/\|/).map((step, index) => (
                                     <div key={recipeData.id+"_instr_"+index}>{step}</div>
@@ -80,19 +86,19 @@ function RecipeDetails({ recipeData }) {
                         </>
                         :
                         <div className="empty-recipe-section">
-                            De bereidingswijze kon voor dit recept helaas niet worden opgehaald.
+                            { getText(activeLanguage, "msgNoInstructions") }
                         </div>
                         }
                 </div>
                 { recipeData.sourceUrl && recipeData.sourceUrl.length > 0
                     ?
                     <div className="recipe-source">
-                        <div className="recipe-section">bron</div>
+                        <div className="recipe-section">{ getText(activeLanguage, "wordSourceUrl") }</div>
                         <div><a href={recipeData.sourceUrl} target="_blank" rel="noreferrer">{recipeData.sourceUrl}</a></div>
                     </div>
                     :
                     <div className="empty-recipe-source">
-                        Een externe link kon voor dit recept helaas niet worden opgehaald.
+                        { getText(activeLanguage, "msgNoSourceUrl") }
                     </div>
                 }
             </div>

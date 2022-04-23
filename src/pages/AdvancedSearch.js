@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import axios from "axios";
+import { LanguageContext } from "../context/LanguageContext";
 import PageTitle from "../components/PageTitle";
 import InputField from "../components/InputField";
 import CuisineSelector from "../components/CuisineSelector";
@@ -9,60 +10,99 @@ import PreviewCarousel from "../components/PreviewCarousel";
 import RecipeDetails from "../components/RecipeDetails";
 import validMaxPreparationTime from "../helpers/validMaxPreparationTime";
 import validSearchTerm from "../helpers/validSearchTerm";
+import getText from "../helpers/getText";
+import getOptionKey from "../helpers/getOptionKey";
 
 function AdvancedSearchPage() {
+    // Form related state
     const [searchTermValue, setSearchTermValue] = React.useState('');
     const [preparationTimeValue, setPreparationTimeValue] = React.useState('');
     const [cuisineValue, setCuisineValue] = React.useState('No preference');
     const [dietValue, setDietValue] = React.useState('No preference');
-    const [formFeedback, setFormFeedback] = useState('');
-    const [submittedFormData, setSubmittedFormData] = useState('');
+    const [formFeedbackNl, setFormFeedbackNl] = useState('');
+    const [formFeedbackEn, setFormFeedbackEn] = useState('');
+    const [submittedFormDataNl, setSubmittedFormDataNl] = useState('');
+    const [submittedFormDataEn, setSubmittedFormDataEn] = useState('');
+
+    // Recipe related state
     const [recipeData, setRecipeData] = useState(null);
     const [errorRecipeData, setErrorRecipeData] = useState(false);
     const [loadingRecipeData, setLoadingRecipeData] = useState(false);
+    const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(-1);
     const [recipeDetails, setRecipeDetails] = useState({});
     const [errorRecipeDetails, setErrorRecipeDetails] = useState(false);
     const [loadingRecipeDetails, setLoadingRecipeDetails] = useState(true);
-    const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(-1);
+
+    // Language context: language can be "en" (english) or "nl" (dutch).
+    const { activeLanguage } = useContext(LanguageContext);
+
+    // Handle selection (clicking) of a preview box.
+    // This should trigger fetching detailed recipe data if:
+    // - a different preview box is selected than previously and also if
+    // - for the previous selection, recipe details could not be fetched due to an error.
     function handlePreviewBoxSelection(previewBoxInd) {
+        console.log(`Preview box with index ${previewBoxInd} selected.`);
+        if (selectedPreviewIndex !== previewBoxInd || errorRecipeDetails) {
+            fetchRecipeDetails(previewBoxInd);
+        }
         setSelectedPreviewIndex(previewBoxInd);
     }
+
     // Handle submit of form data:
     // - validate form data
     // - provide user feedback for invalid form data
+    // - provide a summary of the applied search query, as user feedback
     // - search for results for valid form data
     function submitFormData(e) {
-        let feedback = ``;
+        let feedbackNl = ``;
+        let feedbackEn = ``;
         let validFormData = true;
-        let searchSummary = ``;
+        let searchSummaryNl = ``;
+        let searchSummaryEn = ``;
         e.preventDefault();
         if (!searchTermValue) {
-            feedback = `Vul een zoekterm in.`;
+            feedbackNl = `Vul een zoekterm in.`;
+            feedbackEn = `Search term missing.`;
             validFormData = false;
         } else if (!validSearchTerm(searchTermValue)) {
-            feedback = `"${searchTermValue}"  is geen geldige zoekterm. Toegestaan zijn: alle letters, alle cijfers, de tekens " & ( ) + - en spaties.`;
+            feedbackNl = `"${searchTermValue}"  is geen geldige zoekterm. Toegestaan zijn: alle letters, alle cijfers, de tekens " & ( ) + - en spaties.`;
+            feedbackEn = `"${searchTermValue}"  is not a vaild search term. Allowed are letters, digits,  " & ( ) + - and whitespace.`;
             validFormData = false;
         }
-        searchSummary = `zoekterm "${searchTermValue}"`;
+        searchSummaryNl = `zoekterm "${searchTermValue}"`;
+        searchSummaryEn = `search term "${searchTermValue}"`;
         if (!validMaxPreparationTime(preparationTimeValue)) {
-            if (feedback) { feedback += ` `; }
-            feedback += `"${preparationTimeValue}" is geen geldige bereidingstijd. Vul een getal in dat groter is dan 0.`;
+            if (feedbackNl) { feedbackNl += ` `; feedbackEn += ` `; }
+            feedbackNl += `"${preparationTimeValue}" is geen geldige bereidingstijd. Vul een getal in dat groter is dan 0.`;
+            feedbackEn += `"${preparationTimeValue}"  is not a vaild preparation time. Please fill out a number that is greater than 0.`;
             validFormData = false;
         } else {
-            searchSummary += `, maximale bereidingstijd ${preparationTimeValue} minuten`;
+            if (preparationTimeValue) {
+                searchSummaryNl += `, maximale bereidingstijd ${preparationTimeValue} minuten`;
+                searchSummaryEn += `, maximum preparation time ${preparationTimeValue} minutes`;
+            }
         }
-        setFormFeedback(feedback);
+        setFormFeedbackNl(feedbackNl);
+        setFormFeedbackEn(feedbackEn);
+        console.log("value: "+cuisineValue);
+        console.log("key: "+getOptionKey(cuisineValue));
+        console.log("nl text: "+getText("nl", getOptionKey(cuisineValue)));
+        console.log("en text: "+getText("en", getOptionKey(cuisineValue)));
         if (cuisineValue !== 'No preference') {
-            searchSummary += `, keuken "${cuisineValue}"`;
+            searchSummaryNl += `, keuken ${ getText("nl", getOptionKey(cuisineValue)) }`;
+            searchSummaryEn += `, cuisine ${ getText("en", getOptionKey(cuisineValue)) }`;
         }
         if (dietValue !== 'No preference') {
-            searchSummary += `, dieet "${dietValue}"`;
+            searchSummaryNl += `, dieet ${ getText("nl", getOptionKey(dietValue)) }`;
+            searchSummaryEn += `, diet ${ getText("en", getOptionKey(dietValue)) }`;
         }
-        setSubmittedFormData(searchSummary);
+        setSubmittedFormDataNl(searchSummaryNl);
+        setSubmittedFormDataEn(searchSummaryEn);
         if (validFormData) {
             fetchRecipeData(searchTermValue, preparationTimeValue, cuisineValue, dietValue);
         }
     }
+
     // Handle form reset
     function resetForm() {
         setSearchTermValue('');
@@ -70,14 +110,15 @@ function AdvancedSearchPage() {
         setCuisineValue('No preference');
         setDietValue('No preference');
     }
-    // Search for recipes based on submitted form data and Spoonacular's complex search endpoint.
-    async function fetchRecipeData(searchText, maxPreparationTime, cuisine, diet) {
+
+    // Search for recipes based on submitted form data and Spoonacular's Search Recipes endpoint.
+    async function fetchRecipeData(searchTerm, maxPreparationTime, cuisine, diet) {
         setErrorRecipeData(false);
         setLoadingRecipeData(true);
         setSelectedPreviewIndex(-1);
-        if (searchText) {
+        if (searchTerm) {
             // build the URL for the REST call
-            let restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchText}`;
+            let restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchTerm}`;
             if (maxPreparationTime) {
                 restCall += `&maxReadyTime=${maxPreparationTime}`;
             }
@@ -90,7 +131,6 @@ function AdvancedSearchPage() {
             restCall += `&number=1&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
             alert(restCall);
             try {
-                console.log({searchText});
                 const response = await axios.get(restCall);
                 console.log(response.data.results);
                 setRecipeData(response.data.results);
@@ -102,32 +142,30 @@ function AdvancedSearchPage() {
             setLoadingRecipeData(false);
         }
     }
-    // Fetch recipe details for a specific recipe whenever a new recipe has been selected (by clicking a preview box)
-    useEffect(() => {
-        async function fetchRecipeDetails() {
-            setErrorRecipeDetails(false);
-            setLoadingRecipeDetails(true);
-            if (recipeData && recipeData.length > 0) {
-                const recipeId = recipeData[selectedPreviewIndex].id;
-                const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
-                try {
-                    const result = await axios.get(recipeQuery);
-                    console.log(result.data);
-                    setRecipeDetails(result.data);
-                } catch (error) {
-                    console.error(error);
-                    setErrorRecipeDetails(true);
-                }
-                setLoadingRecipeDetails(false);
+
+    // Fetch recipe details for a specific recipe based on Spoonacular's Get Recipe Information endpoint.
+    async function fetchRecipeDetails(previewIndex) {
+        setErrorRecipeDetails(false);
+        setLoadingRecipeDetails(true);
+        if (recipeData && recipeData.length > 0) {
+            const recipeId = recipeData[previewIndex].id;
+            const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            try {
+                const result = await axios.get(recipeQuery);
+                console.log(result.data);
+                setRecipeDetails(result.data);
+            } catch (error) {
+                console.error(error);
+                setErrorRecipeDetails(true);
             }
+            setLoadingRecipeDetails(false);
         }
-        if (selectedPreviewIndex > -1) {
-            fetchRecipeDetails();
-        }
-    }, [selectedPreviewIndex]);
+    }
+
+    // Render page content
     return(
         <>
-            <PageTitle text="Uitgebreid zoeken naar recepten" />
+            <PageTitle page="advancedsearch" />
             <form>
                 <fieldset>
                     <div className="form-elements-row">
@@ -135,11 +173,11 @@ function AdvancedSearchPage() {
                             <InputField
                                 fieldClassName="free-text"
                                 fieldId="text-query-field"
-                                labelText="Vul een zoekterm in:"
+                                labelText={ getText(activeLanguage,"labelSearchField") }
                                 fieldType="text"
                                 fieldName="text-query"
                                 fieldValue={searchTermValue}
-                                fieldPlacholder="bijv fruit salad"
+                                fieldPlacholder={ getText(activeLanguage,"placeholderSearchField") }
                                 fnOnChange={setSearchTermValue}
                             />
                         </div>
@@ -149,19 +187,27 @@ function AdvancedSearchPage() {
                             <InputField
                                 fieldClassName="number"
                                 fieldId="preparation-time-field"
-                                labelText="Maximale bereidingstijd in minuten:"
+                                labelText={ getText(activeLanguage,"labelMaxPreparationTimeField") }
                                 fieldType="text"
                                 fieldName="preparation-time"
                                 fieldValue={preparationTimeValue}
-                                fieldPlacholder="bijv 30"
+                                fieldPlacholder={ getText(activeLanguage,"placeholderMaxPreparationTimeField") }
                                 fnOnChange={setPreparationTimeValue}
                             />
                         </div>
                         <div className="form-element">
-                            <CuisineSelector selectorValue={cuisineValue} fnOnChange={setCuisineValue}/>
+                            <CuisineSelector
+                                labelText={ getText(activeLanguage,"labelCuisineSelector") }
+                                selectorValue={cuisineValue}
+                                fnOnChange={setCuisineValue}
+                            />
                         </div>
                         <div className="form-element">
-                            <DietSelector selectorValue={dietValue} fnOnChange={setDietValue}/>
+                            <DietSelector
+                                labelText={ getText(activeLanguage,"labelDietSelector") }
+                                selectorValue={dietValue}
+                                fnOnChange={setDietValue}
+                            />
                         </div>
                     </div>
                     <div className="form-elements-row">
@@ -169,7 +215,7 @@ function AdvancedSearchPage() {
                             <ButtonForResetOrSubmit
                                 buttonType="submit"
                                 buttonDisabled={!searchTermValue}
-                                buttonText="Zoeken"
+                                buttonText={ getText(activeLanguage,"searchButtonText") }
                                 fnOnClick={submitFormData}
                             />
                         </div>
@@ -178,34 +224,46 @@ function AdvancedSearchPage() {
                                 buttonType="reset"
                                 buttonDisabled={!searchTermValue && !preparationTimeValue &&
                                     cuisineValue === "No preference" && dietValue === "No preference"}
-                                buttonText="Reset"
+                                buttonText={ getText(activeLanguage,"resetButtonText") }
                                 fnOnClick={resetForm}
                             />
                         </div>
                     </div>
                 </fieldset>
             </form>
-            { formFeedback &&
-                <div className="error-message">{formFeedback}</div>
+            { formFeedbackNl && activeLanguage === "nl" &&
+                <div className="error-message">{formFeedbackNl}</div>
+            }
+            { formFeedbackEn && activeLanguage === "en" &&
+                <div className="error-message">{formFeedbackEn}</div>
             }
             { errorRecipeData &&
-                <div className="error-message">Er is iets misgegaan met het zoeken naar recepten. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
+                <div className="error-message">{ getText(activeLanguage,"msgFailedToSearchForRecipes") }</div>
             }
             { loadingRecipeData &&
-                <div className="status-message">Zoeken naar recepten...</div>
+                <div className="status-message">{ getText(activeLanguage, "msgSearchingForRecipes") }</div>
             }
             { !errorRecipeData && !loadingRecipeData &&
                 <>
                     { recipeData && recipeData.length > 0
                         ?
                         <>
-                            <div className="confirmation-message">Resultaten voor {submittedFormData}:</div>
+                            <div className="confirmation-message">
+                                { getText(activeLanguage, "msgResultsStart") }
+                                { activeLanguage==="nl" && <>{submittedFormDataNl}:</> }
+                                { activeLanguage==="en" && <>{submittedFormDataEn}:</> }
+                            </div>
                             <PreviewCarousel carouselItems={recipeData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
                         </>
                         :
                         <>
                             { recipeData && recipeData.length === 0 &&
-                                <div className="error-message">Geen resultaten voor {submittedFormData}. Probeer een andere zoekopdracht.</div>
+                                <div className="error-message">
+                                    { getText(activeLanguage, "msgNoResultsStart") }
+                                    { activeLanguage==="nl" && <>{submittedFormDataNl}</> }
+                                    { activeLanguage==="en" && <>{submittedFormDataEn}</> }
+                                    { getText(activeLanguage, "msgNoResultsEnd") }
+                                </div>
                             }
                         </>
                     }
@@ -214,10 +272,10 @@ function AdvancedSearchPage() {
             { selectedPreviewIndex > -1 &&
                 <>
                     { errorRecipeDetails &&
-                        <div className="error-message">Er is iets misgegaan met het ophalen van de receptinformatie. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
+                        <div className="error-message">{ getText(activeLanguage,"msgFailedToFetchRecipeDetails") }</div>
                     }
                     { loadingRecipeDetails &&
-                        <div className="status-message">Receptinformatie ophalen...</div>
+                        <div className="status-message">{ getText(activeLanguage,"msgFetchingRecipeDetails") }</div>
                     }
                     { Object.keys(recipeDetails).length > 0 && !errorRecipeDetails && !loadingRecipeDetails &&
                         <RecipeDetails recipeData={recipeDetails}/>

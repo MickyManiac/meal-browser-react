@@ -1,3 +1,6 @@
+
+import { LanguageContext } from "../context/LanguageContext";
+
 // Check if String text represents a valid search term.
 // Return true (if it does) or false (if it doesn't).
 // See https://en.wikipedia.org/wiki/List_of_Unicode_characters

@@ -1,16 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import axios from "axios";
+import { LanguageContext } from "../context/LanguageContext";
 import PageTitle from "../components/PageTitle";
 import InputField from "../components/InputField";
 import ButtonForResetOrSubmit from "../components/ButtonForResetOrSubmit";
 import PreviewCarousel from "../components/PreviewCarousel";
 import RecipeDetails from "../components/RecipeDetails";
 import validSearchTerm from "../helpers/validSearchTerm";
+import getText from "../helpers/getText";
 
 function SimpleSearchPage() {
+    // Form related state
     const [searchTermValue, setSearchTermValue] = React.useState('');
-    const [formFeedback, setFormFeedback] = useState('');
-    const [submittedFormData, setSubmittedFormData] = useState('');
+    const [formFeedbackNl, setFormFeedbackNl] = useState('');
+    const [formFeedbackEn, setFormFeedbackEn] = useState('');
+    const [submittedFormDataNl, setSubmittedFormDataNl] = useState('');
+    const [submittedFormDataEn, setSubmittedFormDataEn] = useState('');
+
+    // Recipe related state
     const [recipeData, setRecipeData] = useState(null);
     const [errorRecipeData, setErrorRecipeData] = useState(false);
     const [loadingRecipeData, setLoadingRecipeData] = useState(false);
@@ -18,39 +25,58 @@ function SimpleSearchPage() {
     const [recipeDetails, setRecipeDetails] = useState({});
     const [errorRecipeDetails, setErrorRecipeDetails] = useState(false);
     const [loadingRecipeDetails, setLoadingRecipeDetails] = useState(true);
+
+    // Language context: language can be "en" (english) or "nl" (dutch).
+    const { activeLanguage } = useContext(LanguageContext);
+
+    // Handle selection (clicking) of a preview box.
+    // This should trigger fetching detailed recipe data if:
+    // - a different preview box is selected than previously and also if
+    // - for the previous selection, recipe details could not be fetched due to an error.
     function handlePreviewBoxSelection(previewBoxInd) {
+        console.log(`Preview box with index ${previewBoxInd} selected.`);
+        if (selectedPreviewIndex !== previewBoxInd || errorRecipeDetails) {
+            fetchRecipeDetails(previewBoxInd);
+        }
         setSelectedPreviewIndex(previewBoxInd);
     }
+
     // Handle submit of form data:
     // - validate form data
     // - provide user feedback for invalid form data
+    // - provide a summary of the applied search query, as user feedback
     // - search for results for valid form data
     function submitFormData(e) {
-        let feedback = ``;
+        let feedbackNl = ``;
+        let feedbackEn = ``;
         let validFormData = true;
         e.preventDefault();
         if (!searchTermValue) {
-            feedback = `Vul een zoekterm in.`;
+            feedbackNl = `Vul een zoekterm in.`;
+            feedbackEn = `Search term missing.`;
             validFormData = false;
         } else if (!validSearchTerm(searchTermValue)) {
-            feedback = `"${searchTermValue}"  is geen geldige zoekterm. Toegestaan zijn: alle letters, alle cijfers, de tekens " & ( ) + - en spaties.`;
+            feedbackNl = `"${searchTermValue}"  is geen geldige zoekterm. Toegestaan zijn: alle letters, alle cijfers, de tekens " & ( ) + - en spaties.`;
+            feedbackEn = `"${searchTermValue}"  is not a vaild search term. Allowed are letters, digits,  " & ( ) + - and whitespace.`;
             validFormData = false;
         }
-        setFormFeedback(feedback);
-        setSubmittedFormData(`zoekterm "${searchTermValue}"`);
+        setFormFeedbackNl(feedbackNl);
+        setFormFeedbackEn(feedbackEn);
+        setSubmittedFormDataNl(`zoekterm "${searchTermValue}"`);
+        setSubmittedFormDataEn(`search term "${searchTermValue}"`);
         if (validFormData) {
             fetchRecipeData(searchTermValue);
         }
     }
-    // Search for recipes based on submitted form data and Spoonacular's complex search endpoint.
-    async function fetchRecipeData(searchText) {
+
+    // Search for recipes based on submitted form data and Spoonacular's Search Recipes endpoint.
+    async function fetchRecipeData(searchTerm) {
         setErrorRecipeData(false);
         setLoadingRecipeData(true);
         setSelectedPreviewIndex(-1);
-        if (searchText) {
-            const restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchText}&number=1&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+        if (searchTerm) {
+            const restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchTerm}&number=1&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
             try {
-                console.log({searchText});
                 const response = await axios.get(restCall);
                 console.log(response.data.results);
                 setRecipeData(response.data.results);
@@ -62,43 +88,42 @@ function SimpleSearchPage() {
             setLoadingRecipeData(false);
         }
     }
-    // Fetch recipe details for a specific recipe whenever a new recipe has been selected (by clicking a preview box)
-    useEffect(() => {
-        async function fetchRecipeDetails() {
-            setErrorRecipeDetails(false);
-            setLoadingRecipeDetails(true);
-            if (recipeData && recipeData.length > 0) {
-                const recipeId = recipeData[selectedPreviewIndex].id;
-                const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
-                try {
-                    const result = await axios.get(recipeQuery);
-                    console.log(result.data);
-                    setRecipeDetails(result.data);
-                } catch (error) {
-                    console.error(error);
-                    setErrorRecipeDetails(true);
-                }
-                setLoadingRecipeDetails(false);
+
+    // Fetch recipe details for a specific recipe based on Spoonacular's Get Recipe Information endpoint.
+    async function fetchRecipeDetails(previewIndex) {
+        setErrorRecipeDetails(false);
+        setLoadingRecipeDetails(true);
+        alert(`Fetching recipe details for index ${previewIndex}`);
+        if (recipeData && recipeData.length > 0) {
+            const recipeId = recipeData[previewIndex].id;
+            const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            try {
+                const result = await axios.get(recipeQuery);
+                console.log(result.data);
+                setRecipeDetails(result.data);
+            } catch (error) {
+                console.error(error);
+                setErrorRecipeDetails(true);
             }
+            setLoadingRecipeDetails(false);
         }
-        if (selectedPreviewIndex > -1) {
-            fetchRecipeDetails();
-        }
-    }, [selectedPreviewIndex]);
+    }
+
+    // Render page content
     return(
         <>
-            <PageTitle text="Eenvoudig zoeken naar recepten" />
+            <PageTitle page="simplesearch" />
             <form>
                 <fieldset>
                     <div className="form-elements-row">
                         <InputField
                             fieldClassName="free-text"
                             fieldId="text-query-field"
-                            labelText="Vul een zoekterm in:"
+                            labelText={ getText(activeLanguage,"labelSearchField") }
                             fieldType="text"
                             fieldName="text-query"
                             fieldValue={searchTermValue}
-                            fieldPlacholder="bijv fruit salad"
+                            fieldPlacholder={ getText(activeLanguage,"placeholderSearchField") }
                             fnOnChange={setSearchTermValue}
                         />
                     </div>
@@ -106,33 +131,45 @@ function SimpleSearchPage() {
                         <ButtonForResetOrSubmit
                             buttonType="submit"
                             buttonDisabled={!searchTermValue}
-                            buttonText="Zoeken"
+                            buttonText={ getText(activeLanguage,"searchButtonText") }
                             fnOnClick={submitFormData}
                         />
                     </div>
                 </fieldset>
             </form>
-            { formFeedback &&
-                <div className="error-message">{formFeedback}</div>
+            { formFeedbackNl && activeLanguage === "nl" &&
+                <div className="error-message">{formFeedbackNl}</div>
+            }
+            { formFeedbackEn && activeLanguage === "en" &&
+                <div className="error-message">{formFeedbackEn}</div>
             }
             { errorRecipeData &&
-                <div className="error-message">Er is iets misgegaan met het zoeken naar recepten. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
+                <div className="error-message">{ getText(activeLanguage,"msgFailedToSearchForRecipes") }</div>
             }
             { loadingRecipeData &&
-                <div className="status-message">Zoeken naar recepten...</div>
+                <div className="status-message">{ getText(activeLanguage, "msgSearchingForRecipes") }</div>
             }
             { !errorRecipeData && !loadingRecipeData &&
                 <>
                     { recipeData && recipeData.length > 0
                         ?
                         <>
-                            <div className="confirmation-message">Resultaten voor {submittedFormData}:</div>
+                            <div className="confirmation-message">
+                                { getText(activeLanguage, "msgResultsStart") }
+                                { activeLanguage==="nl" && <>{submittedFormDataNl}:</> }
+                                { activeLanguage==="en" && <>{submittedFormDataEn}:</> }
+                            </div>
                             <PreviewCarousel carouselItems={recipeData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
                         </>
                         :
                         <>
                             { recipeData && recipeData.length === 0 &&
-                                <div className="error-message">Geen resultaten voor {submittedFormData}. Probeer een andere zoekterm.</div>
+                                <div className="error-message">
+                                    { getText(activeLanguage, "msgNoResultsStart") }
+                                    { activeLanguage==="nl" && <>{submittedFormDataNl}</> }
+                                    { activeLanguage==="en" && <>{submittedFormDataEn}</> }
+                                    { getText(activeLanguage, "msgNoResultsEnd") }
+                                </div>
                             }
                         </>
                     }
@@ -141,10 +178,10 @@ function SimpleSearchPage() {
             { selectedPreviewIndex > -1 &&
                 <>
                     { errorRecipeDetails &&
-                        <div className="error-message">Er is iets misgegaan met het ophalen van de receptinformatie. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
+                        <div className="error-message">{ getText(activeLanguage,"msgFailedToFetchRecipeDetails") }</div>
                     }
                     { loadingRecipeDetails &&
-                        <div className="status-message">Receptinformatie ophalen...</div>
+                        <div className="status-message">{ getText(activeLanguage,"msgFetchingRecipeDetails") }</div>
                     }
                     { Object.keys(recipeDetails).length > 0 && !errorRecipeDetails && !loadingRecipeDetails &&
                         <RecipeDetails recipeData={recipeDetails}/>

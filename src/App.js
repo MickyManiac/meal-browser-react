@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import './App.css';
+import LanguageBar from "./components/LanguageBar";
 import TopNavBar from "./components/TopNavBar";
 import HomePage from "./pages/Home";
 import SimpleSearchPage from "./pages/SimpleSearch";
@@ -10,6 +11,7 @@ import MostPopularPage from "./pages/MostPopular";
 function App() {
     return (
         <div>
+            <LanguageBar />
             <TopNavBar />
             <Switch>
                 <Route path="/" exact>

@@ -4,12 +4,10 @@ import PreviewBox from "./PreviewBox";
 
 function PreviewCarousel({ carouselItems, fnUseSelectedItemIndex }) {
     const maxNrPositions = 3;
-    // copy property carouselItems into state variable items
-    // change items on carousel rotation while keeping carouselItems unchanged
-    // use memo to avoid that carousel re-renders due to state changes in parent page/component
+    // Copy property carouselItems into state variable items.
+    // Change items on carousel rotation while keeping carouselItems unchanged.
     const [items, setItems] = useState([]);
     const [offset, setOffset] = useState(0);
-    const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
     function rotateLeft() {
         if (offset <= 0) { setOffset (offset - 1 + items.length); }
         else { setOffset(offset - 1); }
@@ -32,37 +30,30 @@ function PreviewCarousel({ carouselItems, fnUseSelectedItemIndex }) {
         // clone the carouselItems property, so it will remain unchanged
         setItems(Array.from(carouselItems));
     }, []);
-    useEffect(() => {
-        if (selectedItemIndex > -1) {
-            fnUseSelectedItemIndex(selectedItemIndex);
-        }
-    }, [selectedItemIndex]);
-    // temporary
-    useEffect(() => {
-        console.log(items);
-    }, [offset]);
     return(
         <>
-            { offset }
             { items.length > 0 &&
                 <div className="carousel-box">
                     { items.length > maxNrPositions &&
-                        <button className="arrow" type="button" onClick={rotateLeft}><div className="arrowsign">&lt;</div></button>
+                        <button className="arrow" type="button" onClick={rotateLeft}>
+                            <div className="arrowsign">&lt;</div>
+                        </button>
                     }
                     { items.slice(0, maxNrPositions).map((data, index) => (
                         <PreviewBox
                             key={data.id+"_"+data.title}
                             previewData={data}
                             itemIndex={(index + offset) % items.length}
-                            fnUseItemIndex={setSelectedItemIndex}
+                            fnUseItemIndex={fnUseSelectedItemIndex}
                         />
                     ))}
                     { items.length > maxNrPositions &&
-                        <button className="arrow" type="button" onClick={rotateRight}><div className="arrowsign">&gt;</div></button>
+                        <button className="arrow" type="button" onClick={rotateRight}>
+                            <div className="arrowsign">&gt;</div>
+                        </button>
                     }
                 </div>
             }
-            { selectedItemIndex }
         </>
     );
 }

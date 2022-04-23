@@ -1,27 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
+import { LanguageContext } from "../context/LanguageContext";
 import PageTitle from "../components/PageTitle";
 import PreviewCarousel from "../components/PreviewCarousel";
 import RecipeDetails from "../components/RecipeDetails";
+import getText from "../helpers/getText";
 // temp, remove later
 import noimagefound from "../assets/NoImageFound.GIF";
 
 function MostPopularPage() {
+    // Recipe related state
     const [bulkData, setBulkData] = useState([]);
     const [errorBulkData, setErrorBulkData] = useState(false);
     const [loadingBulkData, setLoadingBulkData] = useState(false);
+    const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(-1);
     const [recipeDetails, setRecipeDetails] = useState({});
     const [errorRecipeDetails, setErrorRecipeDetails] = useState(false);
     const [loadingRecipeDetails, setLoadingRecipeDetails] = useState(true);
-    const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(-1);
+
+    // Language context: language can be "en" (english) or "nl" (dutch).
+    const { activeLanguage } = useContext(LanguageContext);
+
+    // Handle selection (clicking) of a preview box
+    // This should trigger fetching detailed recipe data if:
+    // - a different preview box is selected than previously and also if
+    // - for the previous selection, recipe details could not be fetched due to an error
     function handlePreviewBoxSelection(previewBoxInd) {
+        console.log(`Preview box with index ${previewBoxInd} selected.`);
+        if (selectedPreviewIndex !== previewBoxInd || errorRecipeDetails) {
+            fetchRecipeDetails(previewBoxInd);
+        }
         setSelectedPreviewIndex(previewBoxInd);
     }
-    // Bulk REST call for 8 specific recipes
-    // const bulkQuery = `https://api.spoonacular.com/recipes/informationBulk?ids=715562,715419,715521,715495,715560,776505,715538,716429&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
-    // remove later
-    const bulkQuery = `https://api.spoonacular.com/recipes/informationBulk?ids=715562,715419,715521,715495&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
-    // const bulkQuery = `https://api.spoonacular.com/recipes/informationBulk?ids=715562&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+
     // temp testBulkData, remove later
     const testBulkData = [
         {id: "411022", title: "Eenvoudigste recept", readyInMinutes: 10, aggregateLikes: 23013},
@@ -30,29 +41,39 @@ function MostPopularPage() {
         {id: "411025", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303},
         {id: "411026", title: "Eenvoudig recept", image: noimagefound, readyInMinutes: 30, aggregateLikes: 12303}
     ];
-    // Fetch bulk data for a predefined list of popular recipes.
+
+    // Fetch recipe data for a list of specific recipes based on Spoonacular's Get Recipe Information Bulk endpoint.
     useEffect(() => {
         async function fetchBulkData() {
             setErrorBulkData(false);
             setLoadingBulkData(true);
+            setSelectedPreviewIndex(-1);
+
+            // Bulk REST call for 8 specific recipes
+            // const restCall = `https://api.spoonacular.com/recipes/informationBulk?ids=715562,715419,715521,715495,715560,776505,715538,716429&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            // Temporarily reduce the amount of recipes in order to avoid that the API key's quota is exceeded very fast.
+            // Quota is 150 points per day for a free subscription.
+            // Calling this endpoint requires 1 point for the first recipe and 0.5 points for every additional
+            // recipe returned, i.e. 4.5 points for 8 recipes each time, i.e. quota exceeded after 34 requests.
+            // remove later
+            const restCall = `https://api.spoonacular.com/recipes/informationBulk?ids=715562,715419,715521,715495&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            // const restCall = `https://api.spoonacular.com/recipes/informationBulk?ids=715562&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+
             try {
-                const result = await axios.get(bulkQuery);
-                console.log(result.data);
-                setBulkData(result.data);
+                const response = await axios.get(restCall);
+                console.log(response.data);
+                setBulkData(response.data);
             } catch (error) {
                 console.error(error);
                 setErrorBulkData(true);
             }
             setLoadingBulkData(false);
         }
-        // Temporarily disable the effect in order to avoid that the API key's quota is exceeded very fast.
-        // Quota is 150 points per day for a free subscription.
-        // Calling this endpoint requires 1 point for the first recipe and 0.5 points for every additional
-        // recipe returned, i.e. 4.5 points for 8 recipes each time, i.e. quota exceeded after 34 requests.
         if (bulkData.length === 0) {
             fetchBulkData();
         }
     }, []);
+
     // temp testRecipeDetails, remove later
     const testRecipeDetails = {
         id: "411022",
@@ -67,50 +88,48 @@ function MostPopularPage() {
 //        instructions: `• Doe het meel in een kom.• Kluts de eieren.• Voeg melk, eieren en zout toe.• Meng het geheel tot een klontvrij beslag.`,
 //        sourceUrl: "https://www.bestaat.niet.yx",
     };
-    // Fetch recipe details for a specific recipe whenever a new recipe has been selected (by clicking a preview box)
-    useEffect(() => {
-        async function fetchRecipeDetails() {
-            setErrorRecipeDetails(false);
-            setLoadingRecipeDetails(true);
-            if (bulkData.length > 0) {
-                const recipeId = bulkData[selectedPreviewIndex].id;
-                const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
-                try {
-                    const result = await axios.get(recipeQuery);
-                    console.log(result.data);
-                    setRecipeDetails(result.data);
-                } catch (error) {
-                    console.error(error);
-                    setErrorRecipeDetails(true);
-                }
-                setLoadingRecipeDetails(false);
+
+    // Fetch recipe details for a specific recipe based on Spoonacular's Get Recipe Information endpoint.
+    async function fetchRecipeDetails(previewIndex) {
+        setErrorRecipeDetails(false);
+        setLoadingRecipeDetails(true);
+        alert(`Fetching recipe details for index ${previewIndex} while state is ${selectedPreviewIndex}`);
+        if (bulkData && bulkData.length > 0) {
+            const recipeId = bulkData[previewIndex].id;
+            const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            try {
+                const response = await axios.get(recipeQuery);
+                console.log(response.data);
+                setRecipeDetails(response.data);
+            } catch (error) {
+                console.error(error);
+                setErrorRecipeDetails(true);
             }
+            setLoadingRecipeDetails(false);
         }
-        if (selectedPreviewIndex > -1) {
-            fetchRecipeDetails();
-        }
-    }, [selectedPreviewIndex]);
+    }
+
+    // Render page content
     return(
         <>
-            <PageTitle text="Populaire recepten" />
+            <PageTitle page="mostpopular" />
             <>
                 { errorBulkData &&
-                    <div className="error-message">Er is iets misgegaan met het ophalen van de data.</div>
+                    <div className="error-message">{ getText(activeLanguage,"msgFailedToFetchRecipes") }</div>
                 }
                 { loadingBulkData &&
-                    <div className="error-message">Data ophalen...</div>
+                    <div className="status-message">{ getText(activeLanguage, "msgFetchingRecipes") }</div>
                 }
                 { bulkData.length > 0 && !errorBulkData && !loadingBulkData &&
                     <PreviewCarousel carouselItems={bulkData} fnUseSelectedItemIndex={handlePreviewBoxSelection}/>
                 }
                 { selectedPreviewIndex > -1 &&
                     <>
-                        <div>De preview-box met index {selectedPreviewIndex} werd geselecteerd!</div>
                         { errorRecipeDetails &&
-                            <div className="error-message">Er is iets misgegaan met het ophalen van de receptinformatie. Controleer de netwerkverbinding of probeer het later nog een keer.</div>
+                            <div className="error-message">{ getText(activeLanguage,"msgFailedToFetchRecipeDetails") }</div>
                         }
                         { loadingRecipeDetails &&
-                            <div className="error-message">Receptinformatie ophalen...</div>
+                            <div className="status-message">{ getText(activeLanguage,"msgFetchingRecipeDetails") }</div>
                         }
                         { Object.keys(recipeDetails).length > 0 && !errorRecipeDetails && !loadingRecipeDetails &&
                             <RecipeDetails recipeData={recipeDetails}/>
