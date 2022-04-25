@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, useHistory, useLocation } from 'react-router-dom';
 import { AuthenticationContext } from './context/AuthenticationContext';
 import './App.css';
 import LanguageBar from "./components/LanguageBar";
@@ -13,14 +13,23 @@ import AdvancedSearchPage from "./pages/AdvancedSearch";
 import MostPopularPage from "./pages/MostPopular";
 
 function App() {
+    //
     const { isAuth } = useContext(AuthenticationContext);
+
+    // useHistory hook
+    const history = useHistory();
+
+    // useLocation hook
+    const location = useLocation();
+
+    //
     return (
         <div>
             <LanguageBar />
             <TopNavBar />
             <Switch>
                 <Route path="/profile">
-                    {isAuth ? <ProfilePage /> : <Redirect to="/" />}
+                    { isAuth ? <ProfilePage /> : <Redirect to="/" /> }
                 </Route>
                 <Route exact path="/signin">
                     <SignInPage />
@@ -41,6 +50,13 @@ function App() {
                     <MostPopularPage />
                 </Route>
             </Switch>
+            { /* Redirect to homepage if a non-existing path occurs in the address bar. */ }
+            { ( location.pathname !== ("/") &&  location.pathname !== ("/simplesearch") &&
+                location.pathname !== ("/advancedsearch") &&  location.pathname !== ("/mostpopular") &&
+                location.pathname !== ("/profile") &&  location.pathname !== ("/signup") &&
+                location.pathname !== ("/signin")
+              ) && history.push('/')
+            }
         </div>
     );
 }

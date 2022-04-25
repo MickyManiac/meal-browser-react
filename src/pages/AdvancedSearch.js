@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from "axios";
 import { LanguageContext } from "../context/LanguageContext";
 import PageTitle from "../components/PageTitle";
@@ -35,6 +35,12 @@ function AdvancedSearchPage() {
 
     // Language context: language can be "en" (english) or "nl" (dutch).
     const { activeLanguage } = useContext(LanguageContext);
+
+    // Use abort controllers to avoid memory leaks due to unfinished requests.
+    let abortControllerFetchData = new AbortController();
+    let controlSignalFetchData = abortControllerFetchData.signal;
+    let abortControllerFetchDetails = new AbortController();
+    let controlSignalFetchDetails = abortControllerFetchDetails.signal;
 
     // Handle selection (clicking) of a preview box.
     // This should trigger fetching detailed recipe data if:
@@ -129,9 +135,13 @@ function AdvancedSearchPage() {
                 restCall += `&diet=${diet}`;
             }
             restCall += `&number=1&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
-            alert(restCall);
+            // Cancel any unfinished previous requests.
+            abortControllerFetchData.abort();
+            // Control the next request with a new AbortController object.
+            abortControllerFetchData = new AbortController();
+            controlSignalFetchData = abortControllerFetchData.signal;
             try {
-                const response = await axios.get(restCall);
+                const response = await axios.get(restCall, { signal: controlSignalFetchData });
                 console.log(response.data.results);
                 setRecipeData(response.data.results);
                 // Process data ...
@@ -150,8 +160,13 @@ function AdvancedSearchPage() {
         if (recipeData && recipeData.length > 0) {
             const recipeId = recipeData[previewIndex].id;
             const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            // Cancel any unfinished previous requests.
+            abortControllerFetchDetails.abort();
+            // Control the next request with a new AbortController object.
+            abortControllerFetchDetails = new AbortController();
+            controlSignalFetchDetails = abortControllerFetchDetails.signal;
             try {
-                const result = await axios.get(recipeQuery);
+                const result = await axios.get(recipeQuery, { signal: controlSignalFetchDetails });
                 console.log(result.data);
                 setRecipeDetails(result.data);
             } catch (error) {
@@ -161,6 +176,15 @@ function AdvancedSearchPage() {
             setLoadingRecipeDetails(false);
         }
     }
+
+    // Unmount effect: cancel any unfinished requests.
+    useEffect(() => {
+        // Before unmounting, cancel any unfinished requests.
+        return function cleanup() {
+            abortControllerFetchData.abort();
+            abortControllerFetchDetails.abort();
+        }
+    }, []);
 
     // Render page content
     return(

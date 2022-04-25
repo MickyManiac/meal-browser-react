@@ -643,12 +643,28 @@ function getText(lang, key) {
                 return "Versturen";
             }
             break;
+        case "wordHi":
+            if (lang==="en") {
+                return "Hi";
+            }
+            if (lang==="nl") {
+                return "Hallo";
+            }
+            break;
         case "msgAccountAlreadyCreated":
             if (lang==="en") {
                 return "If you have subscribed already, you can skip this step and";
             }
             if (lang==="nl") {
                 return "Heb je al een account? Dan kun je meteen";
+            }
+            break;
+        case "msgAlreadyLoggedIn":
+            if (lang==="en") {
+                return "You are already logged in.";
+            }
+            if (lang==="nl") {
+                return "Je bent al ingelogd.";
             }
             break;
         case "msgNoAccountYet":

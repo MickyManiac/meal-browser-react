@@ -21,6 +21,10 @@ function MostPopularPage() {
     // Language context: language can be "en" (english) or "nl" (dutch).
     const { activeLanguage } = useContext(LanguageContext);
 
+    // Use an abort controller to avoid a memory leak due to unfinished requests.
+    let abortControllerFetchDetails = new AbortController();
+    let controlSignalFetchDetails = abortControllerFetchDetails.signal;
+
     // Handle selection (clicking) of a preview box
     // This should trigger fetching detailed recipe data if:
     // - a different preview box is selected than previously and also if
@@ -44,6 +48,8 @@ function MostPopularPage() {
 
     // Fetch recipe data for a list of specific recipes based on Spoonacular's Get Recipe Information Bulk endpoint.
     useEffect(() => {
+        const abortControllerFetchBulk = new AbortController();
+        const controlSignalFetchBulk = abortControllerFetchBulk.signal;
         async function fetchBulkData() {
             setErrorBulkData(false);
             setLoadingBulkData(true);
@@ -60,17 +66,24 @@ function MostPopularPage() {
             // const restCall = `https://api.spoonacular.com/recipes/informationBulk?ids=715562&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
 
             try {
-                const response = await axios.get(restCall);
+                // const response = await axios.get(restCall, { signal: controller.signal });
+                const response = await axios.get(restCall, { signal: controlSignalFetchBulk });
                 console.log(response.data);
                 setBulkData(response.data);
             } catch (error) {
                 console.error(error);
+                console.log(error.response);
                 setErrorBulkData(true);
             }
             setLoadingBulkData(false);
         }
         if (bulkData.length === 0) {
             fetchBulkData();
+        }
+        // Before unmounting, cancel up any unfinished requests.
+        return function cleanup() {
+            abortControllerFetchBulk.abort();
+            abortControllerFetchDetails.abort();
         }
     }, []);
 
@@ -93,12 +106,17 @@ function MostPopularPage() {
     async function fetchRecipeDetails(previewIndex) {
         setErrorRecipeDetails(false);
         setLoadingRecipeDetails(true);
-        alert(`Fetching recipe details for index ${previewIndex} while state is ${selectedPreviewIndex}`);
+        // alert(`Fetching recipe details for index ${previewIndex} while state is ${selectedPreviewIndex}`);
         if (bulkData && bulkData.length > 0) {
             const recipeId = bulkData[previewIndex].id;
             const recipeQuery = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            // Cancel any unfinished previous requests.
+            abortControllerFetchDetails.abort();
+            // Control the next request with a new AbortController object.
+            abortControllerFetchDetails = new AbortController();
+            controlSignalFetchDetails = abortControllerFetchDetails.signal;
             try {
-                const response = await axios.get(recipeQuery);
+                const response = await axios.get(recipeQuery,{ signal: controlSignalFetchDetails });
                 console.log(response.data);
                 setRecipeDetails(response.data);
             } catch (error) {

@@ -142,6 +142,10 @@ select {
     border-radius: 5px;
 }
 
+select:hover {
+    cursor: pointer;
+}
+
 button.submit-reset {
     margin-top: 10px;
     width: 100px;
@@ -155,10 +159,20 @@ button.submit-reset:disabled {
     border: 1px solid #dddddd;
 }
 
+button.submit-reset:hover:enabled {
+    cursor: pointer;
+    background-color: #cccccc;
+}
+
 button.update {
     width: 100px;
     height: 30px;
     border-radius: 5px;
     border: 1px solid #333333;
     padding: 5px 5px;
+}
+
+button.update:hover {
+    cursor: pointer;
+    background-color: #cccccc;
 }

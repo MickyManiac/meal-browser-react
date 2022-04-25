@@ -31,6 +31,10 @@ function ProfilePage() {
     // Authentication context: keep track of user's authentication status.
     const { user, update } = useContext(AuthenticationContext);
 
+    // Use an abort controller to avoid a memory leak due to unfinished requests.
+    let abortController = new AbortController();
+    let controlSignal = abortController.signal;
+
     // Not clear if any mounting effect is needed.
     useEffect(() => {
         // Set the fake hiden password.
@@ -82,6 +86,11 @@ function ProfilePage() {
             setUpdatingUserData(true);
             // Get JSON Web Token from Local Storage.
             const token = localStorage.getItem('token');
+            // Cancel any unfinished previous requests.
+            abortController.abort();
+            // Control the next request with a new AbortController object.
+            abortController = new AbortController();
+            controlSignal = abortController.signal;
             try {
                 // Put user data.
                 // URL to be used for the NOVI Educational Backend API:
@@ -102,6 +111,8 @@ function ProfilePage() {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`,
                         },
+                        // Pass control signal
+                        signal: controlSignal,
                     });
                     console.log(result.data);
                     // Provide the update response to the update function and pass the password length.
@@ -113,6 +124,7 @@ function ProfilePage() {
                 }
             } catch(error) {
                 console.error(error);
+                console.log(error.response);
                 if (error.toString()==="Error: Network Error") {
                     setErrorFailedToUpdateUserData(true);
                 }
@@ -128,6 +140,15 @@ function ProfilePage() {
         setUpdateEmail(false);
         setUpdatePassword(false);
     }
+
+    // Unmount effect: cancel any unfinished request.
+    useEffect(() => {
+        // Before unmounting, cancel any unfinished request that is controlled with
+        // the abort controller's control signal.
+        return function cleanup() {
+            abortController.abort();
+        }
+    }, []);
 
     // User clicked button to update email address
     function handleUpdateEmail(e) {

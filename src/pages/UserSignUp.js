@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { LanguageContext } from "../context/LanguageContext";
@@ -25,6 +25,10 @@ function SignUpPage() {
 
     // useHistory hook
     const history = useHistory();
+
+    // Use an abort controller to avoid a memory leak due to unfinished requests.
+    let abortController = new AbortController();
+    let controlSignal = abortController.signal;
 
     // Handle submit of form data:
     // - validate form data
@@ -72,6 +76,11 @@ function SignUpPage() {
         setErrorRegistrationRefused(false);
         if (validFormData) {
             setRegistrationOngoing(true);
+            // Cancel any unfinished previous requests.
+            abortController.abort();
+            // Control the next request with a new AbortController object.
+            abortController = new AbortController();
+            controlSignal = abortController.signal;
             try {
                 // Post user data.
                 // URL to be used for the NOVI Educational Backend API:
@@ -82,15 +91,12 @@ function SignUpPage() {
                     email: emailValue,
                     password: passwordValue,
                     role: ["user"],
-                });
-
-                // Let op: omdat we geen axios Canceltoken gebruiken zul je hier een memory-leak melding krijgen.
-                // Om te zien hoe je een canceltoken implementeerd kun je de bonus-branch bekijken!
-
+                }, { signal: controlSignal });
                 // Move ahead to the login-page if no error occurred.
                 history.push('/signin');
             } catch(error) {
                 console.error(error);
+                console.log(error.response);
                 if (error.toString()==="Error: Network Error") {
                     setErrorFailedToSubscribe(true);
                 }
@@ -101,6 +107,15 @@ function SignUpPage() {
             setRegistrationOngoing(false);
         }
     }
+
+    // Unmount effect: cancel any unfinished request.
+    useEffect(() => {
+        // Before unmounting, cancel any unfinished request that is controlled with
+        // the abort controller's control signal.
+        return function cleanup() {
+            abortController.abort();
+        }
+    }, []);
 
     // Render page content
     return (
