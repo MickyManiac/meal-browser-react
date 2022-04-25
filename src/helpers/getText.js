@@ -3,6 +3,70 @@
 function getText(lang, key) {
     // console.log(`calling getText(${lang}, ${purpose})`);
     switch (key) {
+        case "navHome":
+            if (lang==="en") {
+                return "Home";
+            }
+            if (lang==="nl") {
+                return "Home";
+            }
+            break;
+        case "navSimpleSearch":
+            if (lang==="en") {
+                return "Simple search";
+            }
+            if (lang==="nl") {
+                return "Eenvoudig zoeken";
+            }
+            break;
+        case "navAdvancedSearch":
+            if (lang==="en") {
+                return "Advanced search";
+            }
+            if (lang==="nl") {
+                return "Uitgebreid zoeken";
+            }
+            break;
+        case "navMostPopular":
+            if (lang==="en") {
+                return "Popular recipes";
+            }
+            if (lang==="nl") {
+                return "Populaire recepten";
+            }
+            break;
+        case "pageHome":
+            if (lang==="en") {
+                return "Find recipes for all occasions with Meal Browser";
+            }
+            if (lang==="nl") {
+                return "Vind altijd een passend recept met Meal Browser";
+            }
+            break;
+        case "pageSimpleSearch":
+            if (lang==="en") {
+                return "Meal Browser simple search";
+            }
+            if (lang==="nl") {
+                return "Eenvoudig zoeken naar recepten";
+            }
+            break;
+        case "pageAdvancedSearch":
+            if (lang==="en") {
+                return "Meal Browser advanced search";
+            }
+            if (lang==="nl") {
+                return "Uitgebreid zoeken naar recepten";
+            }
+            break;
+        case "pageMostPopular":
+            if (lang==="en") {
+                return "Popular recipes";
+            }
+            if (lang==="nl") {
+                return "Populaire recepten";
+            }
+            break;
         case "msgFetchingRecipes":
             if (lang==="en") {
                 return "Fetching recipes...";
@@ -497,6 +561,174 @@ function getText(lang, key) {
             }
             if (lang==="nl") {
                 return "bron";
+            }
+            break;
+        case "wordSubscribe":
+            if (lang==="en") {
+                return "Subscribe";
+            }
+            if (lang==="nl") {
+                return "Registreren";
+            }
+            break;
+        case "wordLogin":
+            if (lang==="en") {
+                return "Login";
+            }
+            if (lang==="nl") {
+                return "Inloggen";
+            }
+            break;
+        case "wordLogout":
+            if (lang==="en") {
+                return "Logout";
+            }
+            if (lang==="nl") {
+                return "Uitloggen";
+            }
+            break;
+        case "wordProfile":
+            if (lang==="en") {
+                return "User profile";
+            }
+            if (lang==="nl") {
+                return "Gebruikersprofiel";
+            }
+            break;
+        case "wordEmailAddress":
+            if (lang==="en") {
+                return "Email address";
+            }
+            if (lang==="nl") {
+                return "E-mailadres";
+            }
+            break;
+        case "wordUserName":
+            if (lang==="en") {
+                return "User name";
+            }
+            if (lang==="nl") {
+                return "Gebruikersnaam";
+            }
+            break;
+        case "wordPassword":
+            if (lang==="en") {
+                return "Password";
+            }
+            if (lang==="nl") {
+                return "Wachtwoord";
+            }
+            break;
+        case "wordUpdate":
+            if (lang==="en") {
+                return "Update";
+            }
+            if (lang==="nl") {
+                return "Wijzig";
+            }
+            break;
+        case "wordUndo":
+            if (lang==="en") {
+                return "Undo";
+            }
+            if (lang==="nl") {
+                return "Herstel";
+            }
+            break;
+        case "wordSend":
+            if (lang==="en") {
+                return "Send";
+            }
+            if (lang==="nl") {
+                return "Versturen";
+            }
+            break;
+        case "msgAccountAlreadyCreated":
+            if (lang==="en") {
+                return "If you have subscribed already, you can skip this step and";
+            }
+            if (lang==="nl") {
+                return "Heb je al een account? Dan kun je meteen";
+            }
+            break;
+        case "msgNoAccountYet":
+            if (lang==="en") {
+                return "If you have no account yet, then please first";
+            }
+            if (lang==="nl") {
+                return "Heb je nog geen account? Dan moet je je eerst nog even";
+            }
+            break;
+        case "msgFailedToSubscribe":
+            if (lang==="en") {
+                return "Unable to contact database. Please check your network connection or try again later.";
+            }
+            if (lang==="nl") {
+                return "Er is iets misgegaan met het contacteren van de database. Controleer de netwerkverbinding of probeer het later nog een keer.";
+            }
+            break;
+        case "msgRegistrationRefused":
+            if (lang==="en") {
+                return "A user account already exists with this user name and/or email address.";
+            }
+            if (lang==="nl") {
+                return "Er bestaat al een account met deze gebruikersnaam en/of dit e-mailadres.";
+            }
+            break;
+        case "msgRegistrationOngoing":
+            if (lang==="en") {
+                return "Contacting database to create account...";
+            }
+            if (lang==="nl") {
+                return "Database contacteren om het account aan te melden...";
+            }
+            break;
+        case "msgFailedToCheckCredentials":
+            if (lang==="en") {
+                return "Unable to contact database. Please check your network connection or try again later.";
+            }
+            if (lang==="nl") {
+                return "Er is iets misgegaan met het contacteren van de database. Controleer de netwerkverbinding of probeer het later nog een keer.";
+            }
+            break;
+        case "msgCredentialsNotFound":
+            if (lang==="en") {
+                return "No user account found for these login credentials.";
+            }
+            if (lang==="nl") {
+                return "Geen gebruikersaccount gevonden voor deze inloggegevens.";
+            }
+            break;
+        case "msgLoginOngoing":
+            if (lang==="en") {
+                return "Login ongoing...";
+            }
+            if (lang==="nl") {
+                return "Inloggen...";
+            }
+            break;
+        case "msgFailedToUpdateUserData":
+            if (lang==="en") {
+                return "Unable to contact database. Please check your network connection or try again later.";
+            }
+            if (lang==="nl") {
+                return "Er is iets misgegaan met het contacteren van de database. Controleer de netwerkverbinding of probeer het later nog een keer.";
+            }
+            break;
+        case "msgUpdateRefused":
+            if (lang==="en") {
+                return "A user account already exists with this user name and/or email address.";
+            }
+            if (lang==="nl") {
+                return "Er bestaat al een account met deze gebruikersnaam en/of dit e-mailadres.";
+            }
+            break;
+        case "msgUpdatingUserData":
+            if (lang==="en") {
+                return "Updating data...";
+            }
+            if (lang==="nl") {
+                return "Gegevens wijzigen...";
             }
             break;
         default:

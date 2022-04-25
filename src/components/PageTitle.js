@@ -1,51 +1,32 @@
 import React, {useContext} from 'react';
 import './PageTitle.css';
 import { LanguageContext } from "../context/LanguageContext";
+import getText from "../helpers/getText";
 
-function PageTitle({ text, page }) {
+function PageTitle({ page }) {
     const { activeLanguage } = useContext(LanguageContext);
     return (
         <header className="page-title">
-            <h1>{text}</h1>
             { page === "home" &&
-                <>
-                    { activeLanguage === "nl" &&
-                        <h1>Vind altijd een passend recept met Meal Browser</h1>
-                    }
-                    { activeLanguage === "en" &&
-                        <h1>Finding recipes for all occasions with Meal Browser</h1>
-                    }
-                </>
+                <h1>{ getText(activeLanguage, "pageHome") }</h1>
             }
             { page === "simplesearch" &&
-                <>
-                    { activeLanguage === "nl" &&
-                        <h1>Eenvoudig zoeken naar recepten</h1>
-                    }
-                    { activeLanguage === "en" &&
-                        <h1>Meal Browser simple search</h1>
-                    }
-                </>
+                <h1>{ getText(activeLanguage, "pageSimpleSearch") }</h1>
             }
             { page === "advancedsearch" &&
-                <>
-                    { activeLanguage === "nl" &&
-                        <h1>Uitgebreid zoeken naar recepten</h1>
-                    }
-                    { activeLanguage === "en" &&
-                        <h1>Meal Browser advanced search</h1>
-                    }
-                </>
+                <h1>{ getText(activeLanguage, "pageAdvancedSearch") }</h1>
             }
             { page === "mostpopular" &&
-                <>
-                    { activeLanguage === "nl" &&
-                        <h1>Populaire recepten</h1>
-                    }
-                    { activeLanguage === "en" &&
-                        <h1>Popular recipes</h1>
-                    }
-                </>
+                <h1>{ getText(activeLanguage, "pageMostPopular") }</h1>
+            }
+            { page === "signup" &&
+                <h1>{ getText(activeLanguage, "wordSubscribe") }</h1>
+            }
+            { page === "signin" &&
+                <h1>{ getText(activeLanguage, "wordLogin") }</h1>
+            }
+            { page === "profile" &&
+                <h1>{ getText(activeLanguage, "wordProfile") }</h1>
             }
         </header>
     )

@@ -3,7 +3,6 @@ import { LanguageContext } from "../context/LanguageContext";
 import './LanguageBar.css';
 
 function LanguageBar() {
-//    const [activeLanguage, setActiveLanguage] = useState('en');
     const { activeLanguage, setActiveLanguage } = useContext(LanguageContext);
     console.log(activeLanguage);
     return (
@@ -21,7 +20,7 @@ function LanguageBar() {
                 </>
             }
         </div>
-    )
+    );
 }
 
 export default LanguageBar;

@@ -3,15 +3,18 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import LanguageContextProvider from "./context/LanguageContext";
+import AuthenticationContextProvider from "./context/AuthenticationContext";
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-      <LanguageContextProvider>
-          <Router>
-              <App />
-          </Router>
-      </LanguageContextProvider>
+      <Router>
+          <LanguageContextProvider>
+              <AuthenticationContextProvider>
+                  <App />
+              </AuthenticationContextProvider>
+          </LanguageContextProvider>
+      </Router>
   </React.StrictMode>,
   document.getElementById('root')
 );

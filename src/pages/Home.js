@@ -80,8 +80,8 @@ function HomePage() {
                         minutes.
                     </p>
                     <p className="meal-browser-text">
-                        Finally, you may decide to get inspired by Meal Browser's selection of
-                        <Link to="mostpopular">popular recipes</Link>.<br />
+                        Finally, you may decide to get inspired by Meal Browser's selection
+                        of <Link to="mostpopular">popular recipes</Link>.<br />
                         Very likely, your guests will love them.
                     </p>
                     <p className="meal-browser-text">

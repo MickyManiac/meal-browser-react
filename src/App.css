@@ -63,6 +63,30 @@ label {
     font-size: 14px;
 }
 
+div.form-elements-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 5px auto;
+}
+
+div.form-elements-box-left-align {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+}
+
+div.form-elements-box-right-align {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 0;
+}
+
 div.form-elements-row {
     display: flex;
     justify-content: center;
@@ -72,7 +96,21 @@ div.form-elements-row {
 div.form-element {
     display: flex;
     justify-content: center;
+    align-items: center;        /* changed */
     margin: 0px 15px;
+    height: 30px;        /* changed */
+}
+
+div.form-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;        /* changed */
+    margin: 0;
+    height: 30px;        /* changed */
+}
+
+span.form-plain-text {
+    font-size: 16px;
 }
 
 input {
@@ -115,4 +153,12 @@ button.submit-reset {
 
 button.submit-reset:disabled {
     border: 1px solid #dddddd;
+}
+
+button.update {
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid #333333;
+    padding: 5px 5px;
 }

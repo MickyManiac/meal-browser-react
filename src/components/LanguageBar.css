@@ -7,10 +7,10 @@ div.language-bar {
 }
 
 button.inactive-language {
-    margin: 5px 5px;
-    border: 1px solid #cccccc;
+    margin: 5px 0px 3px 0px;
+    border: 1px solid #ffffff;
     border-radius: 6px;
-    padding: 0px 10px 3px 10px;
+    padding: 0px 8px 3px 8px;
     width: 40px;
     height: 30px;
     font-family: cursive;
@@ -21,23 +21,21 @@ button.inactive-language {
 
 button.inactive-language:hover {
     cursor: pointer;
+    border: 1px solid #cccccc;
     background-color: #dddddd;
     color: black;
 }
 
 button.active-language {
-    margin: 5px 5px;
+    margin: 5px 0px 3px 0px;
     border: 2px solid black;
+    border: 1px solid #ffffff;
     border-radius: 6px;
-    padding: 0px 10px 3px 10px;
+    padding: 0px 8px 3px 8px;
     width: 40px;
     height: 30px;
     font-family: cursive;
     font-size: 16px;
     color: black;
     background-color: white;
-}
-
-button.active-language:hover {
-    cursor: pointer;
 }
