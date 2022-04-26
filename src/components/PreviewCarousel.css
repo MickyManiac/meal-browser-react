@@ -5,6 +5,7 @@ div.carousel-box {
     justify-content: center;
     align-items: stretch;
     gap: 10px;
+    margin: 15px 0;
 }
 
 button.arrow {

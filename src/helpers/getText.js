@@ -563,6 +563,14 @@ function getText(lang, key) {
                 return "bron";
             }
             break;
+        case "wordWelcome":
+            if (lang==="en") {
+                return "Welcome";
+            }
+            if (lang==="nl") {
+                return "Welkom";
+            }
+            break;
         case "wordSubscribe":
             if (lang==="en") {
                 return "Subscribe";
@@ -733,10 +741,10 @@ function getText(lang, key) {
             break;
         case "msgUpdateRefused":
             if (lang==="en") {
-                return "A user account already exists with this user name and/or email address.";
+                return "Your session has expired. Please log in again.";
             }
             if (lang==="nl") {
-                return "Er bestaat al een account met deze gebruikersnaam en/of dit e-mailadres.";
+                return "De sessie is verlopen. Log alsjeblieft opnieuw in.";
             }
             break;
         case "msgUpdatingUserData":

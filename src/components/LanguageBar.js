@@ -6,7 +6,7 @@ function LanguageBar() {
     const { activeLanguage, setActiveLanguage } = useContext(LanguageContext);
     console.log(activeLanguage);
     return (
-        <div className="language-bar">
+        <header className="language-bar">
             { activeLanguage==='en' &&
                 <>
                     <button className="active-language">en</button>
@@ -19,7 +19,7 @@ function LanguageBar() {
                     <button className="active-language">nl</button>
                 </>
             }
-        </div>
+        </header>
     );
 }
 

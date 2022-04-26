@@ -29,15 +29,15 @@ function ProfilePage() {
     const { activeLanguage } = useContext(LanguageContext);
 
     // Authentication context: keep track of user's authentication status.
-    const { user, update } = useContext(AuthenticationContext);
+    const { user, update, logout } = useContext(AuthenticationContext);
 
     // Use an abort controller to avoid a memory leak due to unfinished requests.
     let abortController = new AbortController();
     let controlSignal = abortController.signal;
 
-    // Not clear if any mounting effect is needed.
+    // Set the fake hidden password.
     useEffect(() => {
-        // Set the fake hiden password.
+        // Set the fake hidden password based on the stored password length.
         setFakeHiddenPassword(getHiddenText(parseInt(localStorage.getItem('passWordLength'))));
     }, [])
 
@@ -52,6 +52,7 @@ function ProfilePage() {
         let feedbackPasswordNl = ``;
         let feedbackPasswordEn = ``;
         let validFormData = true;
+        // Validate email address.
         if (updateEmail) {
             if (!emailValue) {
                 feedbackEmailNl = `Vul een e-mailadres in.`;
@@ -63,6 +64,7 @@ function ProfilePage() {
                 validFormData = false;
             }
         }
+        // Validate password.
         if (updatePassword) {
             if (!passwordValue) {
                 feedbackPasswordNl = `Vul een wachtwoord in.`;
@@ -74,6 +76,7 @@ function ProfilePage() {
                 validFormData = false;
             }
         }
+        // Set potential user feedback based on form validation.
         setFormFeedbackEmailNl(feedbackEmailNl);
         setFormFeedbackEmailEn(feedbackEmailEn);
         setFormFeedbackPasswordNl(feedbackPasswordNl);
@@ -125,14 +128,18 @@ function ProfilePage() {
             } catch(error) {
                 console.error(error);
                 console.log(error.response);
+                // Network error
                 if (error.toString()==="Error: Network Error") {
                     setErrorFailedToUpdateUserData(true);
                 }
-                // note, the Novi Educational Backend allows updating user data with an e-mail address and/or password
-                // that is already ued for a different account. So, this error is never thrown.
-                if (error.toString()==="Error: Request failed with status code 400") {
+                // Token expiration error.
+                if (error.toString()==="Error: Request failed with status code 401") {
                     setErrorUpdateRefused(true);
+                    // Provide user feedback and log out after 2 seconds.
+                    setTimeout(logout, 2000);
                 }
+                // Note, the Novi Educational Backend allows updating user data with an e-mail address and/or password
+                // that is already ued for a different account. So, an error will not be thrown for those cases.
             }
             setUpdatingUserData(false);
         }
@@ -147,6 +154,7 @@ function ProfilePage() {
         // the abort controller's control signal.
         return function cleanup() {
             abortController.abort();
+            console.log('Unmounting ProfilePage after aborting any unfinished put request.');
         }
     }, []);
 
@@ -185,114 +193,118 @@ function ProfilePage() {
     // Render page content
     return (
         <>
-            <PageTitle page="profile" />
-            <form>
-                <fieldset>
-                    <div className="form-elements-row">
-                        <div className="form-elements-box-right-align">
-                            <div className="form-elements-row">
-                                <div className="form-item">
-                                    <span className="form-plain-text">{getText(activeLanguage, "wordUserName")}:</span>
-                                </div>
-                            </div>
-                            <div className="form-elements-row">
-                                <div className="form-item">
-                                    <span className="form-plain-text">{getText(activeLanguage, "wordEmailAddress")}:</span>
-                                </div>
-                            </div>
-                            <div className="form-elements-row">
-                                <div className="form-item">
-                                    <span className="form-plain-text">{getText(activeLanguage, "wordPassword")}:</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="form-elements-box-left-align">
-                            <div className="form-elements-row">
-                                <div className="form-item">
-                                    <span className="form-plain-text">&nbsp;{user.username}</span>
-                                </div>
-                            </div>
-                            <div className="form-elements-row">
-                                { updateEmail
-                                    ?
-                                    <input
-                                        type="email"
-                                        id="email-field"
-                                        name="email"
-                                        value={emailValue}
-                                        onChange={(e) => setEmailValue(e.target.value)}
-                                    />
-                                    :
+            <header>
+                <PageTitle page="profile" />
+                <form>
+                    <fieldset>
+                        <div className="form-elements-row">
+                            <div className="form-elements-box-right-align">
+                                <div className="form-elements-row">
                                     <div className="form-item">
-                                        <span className="form-plain-text">&nbsp;{user.email}</span>
+                                        <span className="form-plain-text">{getText(activeLanguage, "wordUserName")}:</span>
                                     </div>
-                                }
-                            </div>
-                            <div className="form-elements-row">
-                                { updatePassword
-                                    ?
-                                    <input
-                                        type="password"
-                                        id="password-field"
-                                        name="password"
-                                        autoComplete="new-password"
-                                        value={passwordValue}
-                                        onChange={(e) => setPasswordValue(e.target.value)}
-                                    />
-                                    :
+                                </div>
+                                <div className="form-elements-row">
                                     <div className="form-item">
-                                        <span className="form-plain-text">&nbsp;{fakeHiddenPassword}</span>
+                                        <span className="form-plain-text">{getText(activeLanguage, "wordEmailAddress")}:</span>
                                     </div>
-                                }
-                            </div>
-                        </div>
-                        <div className="form-elements-box-left-align">
-                            <div className="form-elements-row">
-                                <div className="form-element">
+                                </div>
+                                <div className="form-elements-row">
+                                    <div className="form-item">
+                                        <span className="form-plain-text">{getText(activeLanguage, "wordPassword")}:</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-elements-row">
-                                <div className="form-element">
+                            <div className="form-elements-box-left-align">
+                                <div className="form-elements-row">
+                                    <div className="form-item">
+                                        <span className="form-plain-text">&nbsp;{user.username}</span>
+                                    </div>
+                                </div>
+                                <div className="form-elements-row">
                                     { updateEmail
                                         ?
-                                        <button className="update" onClick={undoUpdateEmail}>
-                                            { getText(activeLanguage, "wordUndo") }
-                                        </button>
+                                        <input
+                                            type="text"
+                                            id="email-field"
+                                            name="email"
+                                            value={emailValue}
+                                            onChange={(e) => setEmailValue(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') { handleSubmit(e) } }}
+                                        />
                                         :
-                                        <button className="update" onClick={handleUpdateEmail}>
-                                            { getText(activeLanguage, "wordUpdate") }
-                                        </button>
+                                        <div className="form-item">
+                                            <span className="form-plain-text">&nbsp;{user.email}</span>
+                                        </div>
                                     }
                                 </div>
-                            </div>
-                            <div className="form-elements-row">
-                                <div className="form-element">
+                                <div className="form-elements-row">
                                     { updatePassword
                                         ?
-                                        <button className="update" onClick={undoUpdatePassword}>
-                                            { getText(activeLanguage, "wordUndo") }
-                                        </button>
+                                        <input
+                                            type="password"
+                                            id="password-field"
+                                            name="password"
+                                            autoComplete="new-password"
+                                            value={passwordValue}
+                                            onChange={(e) => setPasswordValue(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') { handleSubmit(e) } }}
+                                        />
                                         :
-                                        <button className="update" onClick={handleUpdatePassword}>
-                                            { getText(activeLanguage, "wordUpdate") }
-                                        </button>
+                                        <div className="form-item">
+                                            <span className="form-plain-text">&nbsp;{fakeHiddenPassword}</span>
+                                        </div>
                                     }
                                 </div>
                             </div>
+                            <div className="form-elements-box-left-align">
+                                <div className="form-elements-row">
+                                    <div className="form-element">
+                                    </div>
+                                </div>
+                                <div className="form-elements-row">
+                                    <div className="form-element">
+                                        { updateEmail
+                                            ?
+                                            <button className="update" onClick={undoUpdateEmail}>
+                                                { getText(activeLanguage, "wordUndo") }
+                                            </button>
+                                            :
+                                            <button className="update" onClick={handleUpdateEmail}>
+                                                { getText(activeLanguage, "wordUpdate") }
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                                <div className="form-elements-row">
+                                    <div className="form-element">
+                                        { updatePassword
+                                            ?
+                                            <button className="update" onClick={undoUpdatePassword}>
+                                                { getText(activeLanguage, "wordUndo") }
+                                            </button>
+                                            :
+                                            <button className="update" onClick={handleUpdatePassword}>
+                                                { getText(activeLanguage, "wordUpdate") }
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="form-elements-row">
-                        <div className="form-element">
-                            <ButtonForResetOrSubmit
-                                buttonType="submit"
-                                buttonDisabled={!updateEmail && !updatePassword}
-                                buttonText={ getText(activeLanguage, "wordSend") }
-                                fnOnClick={handleSubmit}
-                            />
+                        <div className="form-elements-row">
+                            <div className="form-element">
+                                <ButtonForResetOrSubmit
+                                    buttonType="submit"
+                                    buttonDisabled={!updateEmail && !updatePassword}
+                                    buttonText={ getText(activeLanguage, "wordSend") }
+                                    fnOnClick={handleSubmit}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </fieldset>
-            </form>
+                    </fieldset>
+                </form>
+            </header>
             { formFeedbackEmailNl && activeLanguage === "nl" &&
                 <div className="error-message">{formFeedbackEmailNl}</div>
             }

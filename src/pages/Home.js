@@ -6,10 +6,15 @@ import imagenoclue from '../assets/NoClue.GIF';
 import imagenowiknow from '../assets/NowIKnow.GIF';
 
 function HomePage() {
+    // Language context: language can be "en" (english) or "nl" (dutch).
     const { activeLanguage } = useContext(LanguageContext);
+
+    // Render page content, consider language
     return(
         <>
-            <PageTitle page="home" />
+            <header>
+                <PageTitle page="home" />
+            </header>
             { activeLanguage === "nl" &&
                 <main>
                     <p className="meal-browser-text">

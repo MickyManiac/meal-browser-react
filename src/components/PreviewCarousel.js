@@ -31,7 +31,7 @@ function PreviewCarousel({ carouselItems, fnUseSelectedItemIndex }) {
         setItems(Array.from(carouselItems));
     }, []);
     return(
-        <>
+        <section>
             { items.length > 0 &&
                 <div className="carousel-box">
                     { items.length > maxNrPositions &&
@@ -54,7 +54,7 @@ function PreviewCarousel({ carouselItems, fnUseSelectedItemIndex }) {
                     }
                 </div>
             }
-        </>
+        </section>
     );
 }
 

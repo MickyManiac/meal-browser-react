@@ -6,7 +6,7 @@ import getText from "../helpers/getText";
 function PageTitle({ page }) {
     const { activeLanguage } = useContext(LanguageContext);
     return (
-        <header className="page-title">
+        <div className="page-title">
             { page === "home" &&
                 <h1>{ getText(activeLanguage, "pageHome") }</h1>
             }
@@ -28,7 +28,7 @@ function PageTitle({ page }) {
             { page === "profile" &&
                 <h1>{ getText(activeLanguage, "wordProfile") }</h1>
             }
-        </header>
+        </div>
     )
 }
 

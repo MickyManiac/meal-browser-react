@@ -4,11 +4,11 @@
 // I.e. allowed  characters have a UTF-16 code in the range: (48 <= code <= 57).
 // Also, empty String is allowed. However, null is not allowed.
 function validMaxPreparationTime(text) {
-    // check if text is null
+    // Check if text is null.
     if (text===null) {
         return false;
     }
-    // check the characters
+    // Check the characters.
     for (let i = 0; i < text.length; i++) {
         let code = text.charCodeAt(i);
         if (code < 48 || code > 57) {

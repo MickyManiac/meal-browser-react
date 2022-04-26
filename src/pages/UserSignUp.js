@@ -35,10 +35,11 @@ function SignUpPage() {
     // - provide user feedback for invalid form data
     // - post user data to registration endpoint in case of valid form data
     async function handleSubmit(e) {
-        e.preventDefault();
         let feedbackNl = ``;
         let feedbackEn = ``;
         let validFormData = true;
+        e.preventDefault();
+        // Validate email address.
         if (!emailValue) {
             feedbackNl = `Vul een e-mailadres in.`;
             feedbackEn = `Email address missing.`;
@@ -48,6 +49,7 @@ function SignUpPage() {
             feedbackEn = `"${emailValue}"  is not a valid e-mail address.`;
             validFormData = false;
         }
+        // Validate user name.
         if (!userNameValue) {
             if (feedbackNl) { feedbackNl += ` `; feedbackEn += ` `; }
             feedbackNl += `Vul een gebruikersnaam in.`;
@@ -59,6 +61,7 @@ function SignUpPage() {
             feedbackEn += `Your user name must consist of at least 6 characters.`;
             validFormData = false;
         }
+        // Validate password.
         if (!passwordValue) {
             if (feedbackNl) { feedbackNl += ` `; feedbackEn += ` `; }
             feedbackNl += `Vul een wachtwoord in.`;
@@ -70,8 +73,11 @@ function SignUpPage() {
             feedbackEn += `Your password must consist of at least 6 characters.`;
             validFormData = false;
         }
+        // Set potential user feedback based on form validation.
         setFormFeedbackNl(feedbackNl);
         setFormFeedbackEn(feedbackEn);
+        // If form data validation found no mistakes:
+        // send data updates to the user database.
         setErrorFailedToSubscribe(false);
         setErrorRegistrationRefused(false);
         if (validFormData) {
@@ -120,66 +126,68 @@ function SignUpPage() {
     // Render page content
     return (
     <>
-        <PageTitle page="signup" />
-        <p className="meal-browser-text">{ getText(activeLanguage, "msgAccountAlreadyCreated") } <Link to="/signin">{ getText(activeLanguage, "wordLogin").toLowerCase() }</Link>.</p>
-        <form>
-            <fieldset>
-                <div className="form-elements-box">
-                    <div className="form-elements-row">
-                        <div className="form-element">
-                            <label htmlFor="username-field">
-                                { getText(activeLanguage, "wordUserName") }:
-                                <input
-                                    type="text"
-                                    id="username-field"
-                                    value={userNameValue}
-                                    onChange={(e) => setUserNameValue(e.target.value)}
-                                />
-                            </label>
+        <header>
+            <PageTitle page="signup" />
+            <p className="meal-browser-text">{ getText(activeLanguage, "msgAccountAlreadyCreated") } <Link to="/signin">{ getText(activeLanguage, "wordLogin").toLowerCase() }</Link>.</p>
+            <form>
+                <fieldset>
+                    <div className="form-elements-box">
+                        <div className="form-elements-row">
+                            <div className="form-element">
+                                <label htmlFor="username-field">
+                                    { getText(activeLanguage, "wordUserName") }:
+                                    <input
+                                        type="text"
+                                        id="username-field"
+                                        value={userNameValue}
+                                        onChange={(e) => setUserNameValue(e.target.value)}
+                                    />
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-elements-row">
+                            <div className="form-element">
+                                <label htmlFor="email-field">
+                                    { getText(activeLanguage, "wordEmailAddress") }:
+                                    <input
+                                        type="email"
+                                        id="email-field"
+                                        name="email"
+                                        value={emailValue}
+                                        onChange={(e) => setEmailValue(e.target.value)}
+                                    />
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-elements-row">
+                            <div className="form-element">
+                                <label htmlFor="password-field">
+                                    { getText(activeLanguage, "wordPassword") }:
+                                    <input
+                                        type="password"
+                                        id="password-field"
+                                        name="password"
+                                        autoComplete="new-password"
+                                        value={passwordValue}
+                                        onChange={(e) => setPasswordValue(e.target.value)}
+                                    />
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-elements-row">
                         <div className="form-element">
-                            <label htmlFor="email-field">
-                                { getText(activeLanguage, "wordEmailAddress") }:
-                                <input
-                                    type="email"
-                                    id="email-field"
-                                    name="email"
-                                    value={emailValue}
-                                    onChange={(e) => setEmailValue(e.target.value)}
-                                />
-                            </label>
+                            <ButtonForResetOrSubmit
+                                buttonType="submit"
+                                buttonDisabled={registrationOngoing}
+                                buttonText={ getText(activeLanguage, "wordSubscribe") }
+                                fnOnClick={handleSubmit}
+                            />
                         </div>
                     </div>
-                    <div className="form-elements-row">
-                        <div className="form-element">
-                            <label htmlFor="password-field">
-                                { getText(activeLanguage, "wordPassword") }:
-                                <input
-                                    type="password"
-                                    id="password-field"
-                                    name="password"
-                                    autoComplete="new-password"
-                                    value={passwordValue}
-                                    onChange={(e) => setPasswordValue(e.target.value)}
-                                />
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div className="form-elements-row">
-                    <div className="form-element">
-                        <ButtonForResetOrSubmit
-                            buttonType="submit"
-                            buttonDisabled={registrationOngoing}
-                            buttonText={ getText(activeLanguage, "wordSubscribe") }
-                            fnOnClick={handleSubmit}
-                        />
-                    </div>
-                </div>
-            </fieldset>
-        </form>
+                </fieldset>
+            </form>
+        </header>
         { formFeedbackNl && activeLanguage === "nl" &&
             <div className="error-message">{formFeedbackNl}</div>
         }

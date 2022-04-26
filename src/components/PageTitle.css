@@ -1,8 +1,8 @@
-header.page-title {
+div.page-title {
     margin: 25px auto;
 }
 
-header.page-title h1 {
+div.page-title h1 {
     font-size: 20px;
     text-align: center;
 }

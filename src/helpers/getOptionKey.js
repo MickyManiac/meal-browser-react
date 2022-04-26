@@ -1,4 +1,5 @@
 // Get the purpose key for a selector option.
+// This goes together with helper function getText, which provides a language-specific text fragment per key.
 function getOptionKey(optionValue) {
     // console.log(`calling getOptionKey(${optionValue})`);
     switch (optionValue) {

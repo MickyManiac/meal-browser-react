@@ -3,11 +3,12 @@ import React, { createContext, useState, useEffect } from 'react';
 export const LanguageContext = createContext({});
 
 function LanguageContextProvider({ children }) {
+    // Language related state
     const [language, setLanguage] = useState("en");
 
-    // Set the active language
-    // in context, so it will be used immediately at any state update,
-    // and in local storage, so it persists on refresh
+    // Set the active language:
+    // in context state, so it will be used immediately at any state update, and
+    // in local storage, so it persists on refresh.
     function setActiveLanguage(lang) {
         setLanguage(lang);
         localStorage.setItem('language', lang);

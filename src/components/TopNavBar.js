@@ -6,9 +6,16 @@ import { AuthenticationContext } from "../context/AuthenticationContext";
 import getText from "../helpers/getText";
 
 function TopNavBar() {
+    // Language context: language can be "en" (english) or "nl" (dutch).
     const { activeLanguage } = useContext(LanguageContext);
+
+    // Authentication context: keep track of user's authentication status.
     const { isAuth, user, logout } = useContext(AuthenticationContext);
+
+    // useHistory hook
     const history = useHistory();
+
+    // Render component content
     return (
         <nav className="top-nav-bar">
             <>
@@ -28,7 +35,7 @@ function TopNavBar() {
             { isAuth
                 ?
                 <div className="auth-user">
-                    Welkom, <div className="user-name" onClick={() => history.push('/profile')}>{user.username}</div>
+                    { getText(activeLanguage, "wordWelcome") }, <div className="user-name" onClick={() => history.push('/profile')}>{user.username}</div>
                     <button className="authentication"
                         type="button"
                         onClick={logout}

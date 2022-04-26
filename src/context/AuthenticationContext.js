@@ -26,7 +26,7 @@ function AuthenticationContextProvider({ children }) {
         // Store the received JSON Web Token in Local Storage.
         const token = loginResponse.accessToken;
         localStorage.setItem('token', token);
-        // Store the received password length in Local Storage.
+        // Store the password length in Local Storage.
         localStorage.setItem('passWordLength', passWordLength);
         // Store authentication data as context data.
         setAuthenticationData({
@@ -46,7 +46,7 @@ function AuthenticationContextProvider({ children }) {
 
     // Handle update of user data.
     function update(updateResponse, passWordLength) {
-        // Store the received password length in Local Storage.
+        // Store the password length in Local Storage.
         if (passWordLength > 0)
             localStorage.setItem('passWordLength', passWordLength);
         // Store authentication data as context data.
@@ -80,13 +80,14 @@ function AuthenticationContextProvider({ children }) {
     // "Persist on refresh".
     // On mounting, check if a JSON Web Token is already stored in Local Storage.
     useEffect(() => {
+        // Use an abort controller to avoid a memory leak due to unfinished requests.
         const abortController = new AbortController();
         const controlSignal = abortController.signal;
         const token = localStorage.getItem('token');
         if (token) {
             // If a JSON Web Token is stored, fetch user data for this user.
             // The  decoded token could be used to check token expiration before contacting the backend,
-            // but that can be handled with error handling in the fetchUserData function as well.
+            // but token expiration can be handled with error handling in the fetchUserData function as well.
             fetchUserData(token, controlSignal);
         } else {
             // If no JSON Web Token is stored in Local Storage yet, the authentication status check is completed.

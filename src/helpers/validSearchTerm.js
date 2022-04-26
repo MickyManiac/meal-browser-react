@@ -1,6 +1,3 @@
-
-import { LanguageContext } from "../context/LanguageContext";
-
 // Check if String text represents a valid search term.
 // Return true (if it does) or false (if it doesn't).
 // See https://en.wikipedia.org/wiki/List_of_Unicode_characters
@@ -19,11 +16,11 @@ import { LanguageContext } from "../context/LanguageContext";
 // In addition, characters <space>"&()+- are allowed.
 // Also, empty String is allowed. However, null is not allowed.
 function validSearchTerm(text) {
-    // check if text is null
+    // Check if text is null.
     if (text===null) {
         return false;
     }
-    // check the characters
+    // Check the characters.
     for (let i = 0; i < text.length; i++) {
         let code = text.charCodeAt(i);
         if (!( (code >= 48 && code <= 57) || (code >= 65 && code <= 90) ||

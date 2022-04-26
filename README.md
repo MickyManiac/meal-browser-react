@@ -1,8 +1,13 @@
-#Meal Browser installatiehandleiding
+# Meal Browser installatiehandleiding #
 
-## Inleiding
+## Inhoud ##
 
-Meal Browser is een web applicatie die het mogelijjk maakt om naar recepten te zoeken.
+* [Inleiding](#inleiding)
+* [Installeren en starten](#installeren-en-starten)
+
+## Inleiding ##
+
+Meal Browser is een tweetalige web applicatie die het mogelijk maakt om naar recepten te zoeken.
 Daartoe maakt Meal Browser gebruik van de spoonacular API.
 Met deze API kan een grote hoeveelheid recepten worden doorzocht.
 
@@ -12,22 +17,25 @@ zoekterm "chicken salad sandwich") of naar een categorie van recepten (zoals bij
 
 Met de functionaliteit "uitgebreid zoeken" kan de gebruiker een aantal criteria toepassen om te zoeken naar
 recepten met de gewenste eigenschappen. Zo kan bijvoorbeeld worden gezocht naar een vegetarische salade uit de
-Mediterraanse keuken die binnen 60  minuten bereid kan worden.
+Mediterraanse keuken die binnen 90 minuten bereid kan worden.
 
-![Screenshot Uitgebeid zoeken naar recepten](src/assets/ScreenshotMBUZ.GIF)
+![Screenshot Uitgebeid zoeken naar recepten](src/assets/ScreenshotAdvancedSearch.GIF)
 
 Ten slotte kan de gebruiker zich laten inspireren door een actueel overzicht van populaire recepten, die bij
 menige tafelgast in de smaak zullen vallen.
 
-## Installeren
+Buiten het zoeken naar recepten worden ook gebruikersregistratie, inloggen, uitloggen en het wijzigen van
+gebruikersgegevens ondersteund. Hiermee kan in een latere versie bijvoorbeeld een lijst van favoriete recepten voor
+geregistreerde gebruikers worden verbonden.
 
-Om Meal Browser te installeren kunnen de volgende stappen worden gevolgd.
-* Clone dit project.
-* NPM, Parcel en Axios zijn al geconfigureerd.  
-* **
-* VOEG TOE: Node.js is nodig.
-* VOEG TOE: react, react-dom, react-router-dom, zijn ook al geconfigureerd ... 
-* **
-* Geef om de benodigde dependencies te installeren het commando `npm install`.
-* De benodigde API key is al verwerkt in de code.
-* Om de applicatie te starten, geef je het commando `npm start`.
+## Installeren en starten ##
+
+Om Meal Browser te installeren zijn Node.js en npm als platform en package manager
+nodig. Wanneer deze zijn geïnstalleerd kunnen de volgende stappen worden gevolgd.
+1. Clone dit project.
+2. Alle benodigde packages zijn al geconfigureerd. Geef om de benodigde dependencies te installeren het commando
+   `npm install`.
+3. Wanneer NPM vulnerabilities rapporteert kunnen deze worden verholpen met `npm audit fix`. Volg hiervoor de
+   instructies.
+4. De benodigde API key is al verwerkt in de code. Hiervoor is dus geen verdere actie nodig.
+5. Om de applicatie te starten, geef je het commando `npm run start`.

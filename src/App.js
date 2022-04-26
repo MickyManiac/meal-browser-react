@@ -13,7 +13,7 @@ import AdvancedSearchPage from "./pages/AdvancedSearch";
 import MostPopularPage from "./pages/MostPopular";
 
 function App() {
-    //
+    // Authentication context: keep track of user's authentication status.
     const { isAuth } = useContext(AuthenticationContext);
 
     // useHistory hook
@@ -22,11 +22,12 @@ function App() {
     // useLocation hook
     const location = useLocation();
 
-    //
+    // Render application content
     return (
         <div>
             <LanguageBar />
             <TopNavBar />
+            { /* Navigation based on React Router (v5) */ }
             <Switch>
                 <Route path="/profile">
                     { isAuth ? <ProfilePage /> : <Redirect to="/" /> }

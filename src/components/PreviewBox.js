@@ -11,13 +11,7 @@ function PreviewBox({ previewData, itemIndex, fnUseItemIndex }) {
     // Render component content
     return(
         <div className="preview-box" onClick={() => fnUseItemIndex(itemIndex)}>
-            <div className="upper-part">
-                { previewData.id >= 0
-                    ?
-                    <div className="recipe-id">{previewData.id} (index: {itemIndex})</div>
-                    :
-                    <div className="no-recipe-id">--- (index: {itemIndex})</div>
-                }
+            <div>
                 { previewData.title && previewData.title.length > 0
                     ?
                     <div className="recipe-name">{previewData.title}</div>
@@ -25,7 +19,7 @@ function PreviewBox({ previewData, itemIndex, fnUseItemIndex }) {
                     <div className="no-recipe-name">{ getText(activeLanguage, "shortMsgNoRecipeName") }</div>
                 }
             </div>
-            <div className="lower-part">
+            <div>
                 <div className="image-box">
                     { previewData.image && previewData.image.length > 0
                         ?

@@ -20,14 +20,6 @@ div.preview-box:hover {
     font-weight: bold;
 }
 
-div.recipe-id {
-    color: black;
-}
-
-div.no-recipe-id {
-    color: #666666;
-}
-
 div.recipe-name {
     /* choose fixed height and clip exceptionally long recipe names in the preview box */
     height: 40px;

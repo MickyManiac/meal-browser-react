@@ -66,6 +66,7 @@ function AdvancedSearchPage() {
         let searchSummaryNl = ``;
         let searchSummaryEn = ``;
         e.preventDefault();
+        // Validate search term.
         if (!searchTermValue) {
             feedbackNl = `Vul een zoekterm in.`;
             feedbackEn = `Search term missing.`;
@@ -77,6 +78,7 @@ function AdvancedSearchPage() {
         }
         searchSummaryNl = `zoekterm "${searchTermValue}"`;
         searchSummaryEn = `search term "${searchTermValue}"`;
+        // Validate maximum preparation time.
         if (!validMaxPreparationTime(preparationTimeValue)) {
             if (feedbackNl) { feedbackNl += ` `; feedbackEn += ` `; }
             feedbackNl += `"${preparationTimeValue}" is geen geldige bereidingstijd. Vul een getal in dat groter is dan 0.`;
@@ -88,12 +90,9 @@ function AdvancedSearchPage() {
                 searchSummaryEn += `, maximum preparation time ${preparationTimeValue} minutes`;
             }
         }
+        // Set potential user feedback based on form validation.
         setFormFeedbackNl(feedbackNl);
         setFormFeedbackEn(feedbackEn);
-        console.log("value: "+cuisineValue);
-        console.log("key: "+getOptionKey(cuisineValue));
-        console.log("nl text: "+getText("nl", getOptionKey(cuisineValue)));
-        console.log("en text: "+getText("en", getOptionKey(cuisineValue)));
         if (cuisineValue !== 'No preference') {
             searchSummaryNl += `, keuken ${ getText("nl", getOptionKey(cuisineValue)) }`;
             searchSummaryEn += `, cuisine ${ getText("en", getOptionKey(cuisineValue)) }`;
@@ -102,8 +101,10 @@ function AdvancedSearchPage() {
             searchSummaryNl += `, dieet ${ getText("nl", getOptionKey(dietValue)) }`;
             searchSummaryEn += `, diet ${ getText("en", getOptionKey(dietValue)) }`;
         }
+        // Set summary of search query.
         setSubmittedFormDataNl(searchSummaryNl);
         setSubmittedFormDataEn(searchSummaryEn);
+        // If form data validation found no mistakes: fetch recipe data.
         if (validFormData) {
             fetchRecipeData(searchTermValue, preparationTimeValue, cuisineValue, dietValue);
         }
@@ -123,7 +124,7 @@ function AdvancedSearchPage() {
         setLoadingRecipeData(true);
         setSelectedPreviewIndex(-1);
         if (searchTerm) {
-            // build the URL for the REST call
+            // Build the URL for the REST call.
             let restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchTerm}`;
             if (maxPreparationTime) {
                 restCall += `&maxReadyTime=${maxPreparationTime}`;
@@ -134,7 +135,7 @@ function AdvancedSearchPage() {
             if (diet !== 'No preference') {
                 restCall += `&diet=${diet}`;
             }
-            restCall += `&number=1&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            restCall += `&number=5&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
             // Cancel any unfinished previous requests.
             abortControllerFetchData.abort();
             // Control the next request with a new AbortController object.
@@ -189,72 +190,74 @@ function AdvancedSearchPage() {
     // Render page content
     return(
         <>
-            <PageTitle page="advancedsearch" />
-            <form>
-                <fieldset>
-                    <div className="form-elements-row">
-                        <div className="form-element">
-                            <InputField
-                                fieldClassName="free-text"
-                                fieldId="text-query-field"
-                                labelText={ getText(activeLanguage,"labelSearchField") }
-                                fieldType="text"
-                                fieldName="text-query"
-                                fieldValue={searchTermValue}
-                                fieldPlacholder={ getText(activeLanguage,"placeholderSearchField") }
-                                fnOnChange={setSearchTermValue}
-                            />
+            <header>
+                <PageTitle page="advancedsearch" />
+                <form>
+                    <fieldset>
+                        <div className="form-elements-row">
+                            <div className="form-element">
+                                <InputField
+                                    fieldClassName="free-text"
+                                    fieldId="text-query-field"
+                                    labelText={ getText(activeLanguage,"labelSearchField") }
+                                    fieldType="text"
+                                    fieldName="text-query"
+                                    fieldValue={searchTermValue}
+                                    fieldPlacholder={ getText(activeLanguage,"placeholderSearchField") }
+                                    fnOnChange={setSearchTermValue}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="form-elements-row">
-                        <div className="form-element">
-                            <InputField
-                                fieldClassName="number"
-                                fieldId="preparation-time-field"
-                                labelText={ getText(activeLanguage,"labelMaxPreparationTimeField") }
-                                fieldType="text"
-                                fieldName="preparation-time"
-                                fieldValue={preparationTimeValue}
-                                fieldPlacholder={ getText(activeLanguage,"placeholderMaxPreparationTimeField") }
-                                fnOnChange={setPreparationTimeValue}
-                            />
+                        <div className="form-elements-row">
+                            <div className="form-element">
+                                <InputField
+                                    fieldClassName="number"
+                                    fieldId="preparation-time-field"
+                                    labelText={ getText(activeLanguage,"labelMaxPreparationTimeField") }
+                                    fieldType="text"
+                                    fieldName="preparation-time"
+                                    fieldValue={preparationTimeValue}
+                                    fieldPlacholder={ getText(activeLanguage,"placeholderMaxPreparationTimeField") }
+                                    fnOnChange={setPreparationTimeValue}
+                                />
+                            </div>
+                            <div className="form-element">
+                                <CuisineSelector
+                                    labelText={ getText(activeLanguage,"labelCuisineSelector") }
+                                    selectorValue={cuisineValue}
+                                    fnOnChange={setCuisineValue}
+                                />
+                            </div>
+                            <div className="form-element">
+                                <DietSelector
+                                    labelText={ getText(activeLanguage,"labelDietSelector") }
+                                    selectorValue={dietValue}
+                                    fnOnChange={setDietValue}
+                                />
+                            </div>
                         </div>
-                        <div className="form-element">
-                            <CuisineSelector
-                                labelText={ getText(activeLanguage,"labelCuisineSelector") }
-                                selectorValue={cuisineValue}
-                                fnOnChange={setCuisineValue}
-                            />
+                        <div className="form-elements-row">
+                            <div className="form-element">
+                                <ButtonForResetOrSubmit
+                                    buttonType="submit"
+                                    buttonDisabled={!searchTermValue}
+                                    buttonText={ getText(activeLanguage,"searchButtonText") }
+                                    fnOnClick={submitFormData}
+                                />
+                            </div>
+                            <div className="form-element">
+                                <ButtonForResetOrSubmit
+                                    buttonType="reset"
+                                    buttonDisabled={!searchTermValue && !preparationTimeValue &&
+                                        cuisineValue === "No preference" && dietValue === "No preference"}
+                                    buttonText={ getText(activeLanguage,"resetButtonText") }
+                                    fnOnClick={resetForm}
+                                />
+                            </div>
                         </div>
-                        <div className="form-element">
-                            <DietSelector
-                                labelText={ getText(activeLanguage,"labelDietSelector") }
-                                selectorValue={dietValue}
-                                fnOnChange={setDietValue}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-elements-row">
-                        <div className="form-element">
-                            <ButtonForResetOrSubmit
-                                buttonType="submit"
-                                buttonDisabled={!searchTermValue}
-                                buttonText={ getText(activeLanguage,"searchButtonText") }
-                                fnOnClick={submitFormData}
-                            />
-                        </div>
-                        <div className="form-element">
-                            <ButtonForResetOrSubmit
-                                buttonType="reset"
-                                buttonDisabled={!searchTermValue && !preparationTimeValue &&
-                                    cuisineValue === "No preference" && dietValue === "No preference"}
-                                buttonText={ getText(activeLanguage,"resetButtonText") }
-                                fnOnClick={resetForm}
-                            />
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
+                    </fieldset>
+                </form>
+            </header>
             { formFeedbackNl && activeLanguage === "nl" &&
                 <div className="error-message">{formFeedbackNl}</div>
             }

@@ -38,6 +38,7 @@ function SignInPage() {
         let feedbackEn = ``;
         let validFormData = true;
         e.preventDefault();
+        // Validate user name.
         if (!userNameValue) {
             feedbackNl = `Vul een gebruikersnaam in.`;
             feedbackEn = `User name missing.`;
@@ -47,6 +48,7 @@ function SignInPage() {
             feedbackEn = `Your user name must consist of at least 6 characters.`;
             validFormData = false;
         }
+        // Validate password.
         if (!passwordValue) {
             if (feedbackNl) { feedbackNl += ` `; feedbackEn += ` `; }
             feedbackNl += `Vul een wachtwoord in.`;
@@ -58,8 +60,11 @@ function SignInPage() {
             feedbackEn += `A password must consist of at least 6 characters.`;
             validFormData = false;
         }
+        // Set potential user feedback based on form validation.
         setFormFeedbackNl(feedbackNl);
         setFormFeedbackEn(feedbackEn);
+        // If form data validation found no mistakes:
+        // send data updates to the user database.
         setErrorFailedToCheckCredentials(false);
         setErrorCredentialsNotFound(false);
         if (validFormData) {
@@ -107,7 +112,9 @@ function SignInPage() {
     // Render page content
     return (
         <>
-            <PageTitle page="signin" />
+            <header>
+                <PageTitle page="signin" />
+            </header>
             { isAuth
                 ?
                 <p className="meal-browser-text">
@@ -115,50 +122,54 @@ function SignInPage() {
                 </p>
                 :
                 <>
-                    <p className="meal-browser-text">{ getText(activeLanguage, "msgNoAccountYet") } <Link to="/signup">{ getText(activeLanguage, "wordSubscribe").toLowerCase() }</Link>.</p>
-                    <form>
-                        <fieldset>
-                            <div className="form-elements-box">
-                                <div className="form-elements-row">
-                                    <div className="form-element">
-                                        <label htmlFor="username-field">
-                                            { getText(activeLanguage, "wordUserName") }:
-                                            <input
-                                                type="text"
-                                                id="username-field"
-                                                value={userNameValue}
-                                                onChange={(e) => setUserNameValue(e.target.value)}
-                                            />
-                                        </label>
+                    <header>
+                        <p className="meal-browser-text">{ getText(activeLanguage, "msgNoAccountYet") } <Link to="/signup">{ getText(activeLanguage, "wordSubscribe").toLowerCase() }</Link>.</p>
+                        <form>
+                            <fieldset>
+                                <div className="form-elements-box">
+                                    <div className="form-elements-row">
+                                        <div className="form-element">
+                                            <label htmlFor="username-field">
+                                                { getText(activeLanguage, "wordUserName") }:
+                                                <input
+                                                    type="text"
+                                                    id="username-field"
+                                                    value={userNameValue}
+                                                    onChange={(e) => setUserNameValue(e.target.value)}
+                                                    onKeyDown={(e) => { if (e.key === 'Enter') { handleSubmit(e) } }}
+                                                />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div className="form-elements-row">
+                                        <div className="form-element">
+                                            <label htmlFor="password-field">
+                                                { getText(activeLanguage, "wordPassword") }:
+                                                <input
+                                                    type="password"
+                                                    id="password-field"
+                                                    name="password"
+                                                    autoComplete="new-password"
+                                                    value={passwordValue}
+                                                    onChange={(e) => setPasswordValue(e.target.value)}
+                                                    onKeyDown={(e) => { if (e.key === 'Enter') { handleSubmit(e) } }}
+                                                />
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="form-elements-row">
                                     <div className="form-element">
-                                        <label htmlFor="password-field">
-                                            { getText(activeLanguage, "wordPassword") }:
-                                            <input
-                                                type="password"
-                                                id="password-field"
-                                                name="password"
-                                                autoComplete="new-password"
-                                                value={passwordValue}
-                                                onChange={(e) => setPasswordValue(e.target.value)}
-                                            />
-                                        </label>
+                                        <ButtonForResetOrSubmit
+                                            buttonType="submit"
+                                            buttonText={ getText(activeLanguage, "wordLogin") }
+                                            fnOnClick={handleSubmit}
+                                        />
                                     </div>
                                 </div>
-                            </div>
-                            <div className="form-elements-row">
-                                <div className="form-element">
-                                    <ButtonForResetOrSubmit
-                                        buttonType="submit"
-                                        buttonText={ getText(activeLanguage, "wordLogin") }
-                                        fnOnClick={handleSubmit}
-                                    />
-                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
+                            </fieldset>
+                        </form>
+                    </header>
                     { formFeedbackNl && activeLanguage === "nl" &&
                         <div className="error-message">{formFeedbackNl}</div>
                     }

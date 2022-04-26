@@ -6,8 +6,8 @@
 // Part3 must end with 2 or 3 word characters and may contain '.' characters as well, provided that each of those
 // is surrounded by word characters.
 function validEmailAddress(text) {
-    // regular expression representing a valid e-mail address pattern
-    // (not completely ietf compliant)
+    // Regular expression representing a valid e-mail address pattern
+    // (not completely ietf compliant).
     const validPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     if ( validPattern.test(text) )
     {

@@ -57,6 +57,7 @@ function SimpleSearchPage() {
         let feedbackEn = ``;
         let validFormData = true;
         e.preventDefault();
+        // Validate search term.
         if (!searchTermValue) {
             feedbackNl = `Vul een zoekterm in.`;
             feedbackEn = `Search term missing.`;
@@ -66,10 +67,13 @@ function SimpleSearchPage() {
             feedbackEn = `"${searchTermValue}"  is not a vaild search term. Allowed are letters, digits,  " & ( ) + - and whitespace.`;
             validFormData = false;
         }
+        // Set potential user feedback based on form validation.
         setFormFeedbackNl(feedbackNl);
         setFormFeedbackEn(feedbackEn);
+        // Set summary of search query.
         setSubmittedFormDataNl(`zoekterm "${searchTermValue}"`);
         setSubmittedFormDataEn(`search term "${searchTermValue}"`);
+        // If form data validation found no mistakes: fetch recipe data.
         if (validFormData) {
             fetchRecipeData(searchTermValue);
         }
@@ -81,7 +85,7 @@ function SimpleSearchPage() {
         setLoadingRecipeData(true);
         setSelectedPreviewIndex(-1);
         if (searchTerm) {
-            const restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchTerm}&number=1&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
+            const restCall = `https://api.spoonacular.com/recipes/complexSearch?query=${searchTerm}&number=5&addRecipeInformation=true&apiKey=ada1ef8535a14d7695ff0ba52516335a`;
             // Cancel any unfinished previous requests.
             abortControllerFetchData.abort();
             // Control the next request with a new AbortController object.
@@ -136,31 +140,33 @@ function SimpleSearchPage() {
     // Render page content
     return(
         <>
-            <PageTitle page="simplesearch" />
-            <form>
-                <fieldset>
-                    <div className="form-elements-row">
-                        <InputField
-                            fieldClassName="free-text"
-                            fieldId="text-query-field"
-                            labelText={ getText(activeLanguage,"labelSearchField") }
-                            fieldType="text"
-                            fieldName="text-query"
-                            fieldValue={searchTermValue}
-                            fieldPlacholder={ getText(activeLanguage,"placeholderSearchField") }
-                            fnOnChange={setSearchTermValue}
-                        />
-                    </div>
-                    <div className="form-elements-row">
-                        <ButtonForResetOrSubmit
-                            buttonType="submit"
-                            buttonDisabled={!searchTermValue}
-                            buttonText={ getText(activeLanguage,"searchButtonText") }
-                            fnOnClick={submitFormData}
-                        />
-                    </div>
-                </fieldset>
-            </form>
+            <header>
+                <PageTitle page="simplesearch" />
+                <form>
+                    <fieldset>
+                        <div className="form-elements-row">
+                            <InputField
+                                fieldClassName="free-text"
+                                fieldId="text-query-field"
+                                labelText={ getText(activeLanguage,"labelSearchField") }
+                                fieldType="text"
+                                fieldName="text-query"
+                                fieldValue={searchTermValue}
+                                fieldPlacholder={ getText(activeLanguage,"placeholderSearchField") }
+                                fnOnChange={setSearchTermValue}
+                            />
+                        </div>
+                        <div className="form-elements-row">
+                            <ButtonForResetOrSubmit
+                                buttonType="submit"
+                                buttonDisabled={!searchTermValue}
+                                buttonText={ getText(activeLanguage,"searchButtonText") }
+                                fnOnClick={submitFormData}
+                            />
+                        </div>
+                    </fieldset>
+                </form>
+            </header>
             { formFeedbackNl && activeLanguage === "nl" &&
                 <div className="error-message">{formFeedbackNl}</div>
             }
